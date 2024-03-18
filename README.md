@@ -9,27 +9,27 @@ For this design project, we are planning to develop a robotics platform by creat
 
 Weekly Goals: 
 Week of March 18th  
--Make the wiring diagram 
--Set up GitHub repository 
--3d print wheel pieces 
+- Make the wiring diagram 
+- Set up GitHub repository 
+- 3d print wheel pieces 
 
 Week of March 25th 
--Wire up design 
--Simple test code to verify wiring and power management 
--Design and order PCBs 
--Assemble wheels 
+- Wire up design 
+- Simple test code to verify wiring and power management 
+- Design and order PCBs 
+- Assemble wheels 
 
 Week of April 1st 
--Develop the inverse kinematic model 
--Make controller code 
--3d print robot body 
+- Develop the inverse kinematic model 
+- Make controller code 
+- 3d print robot body 
 
 Week of April 8th 
--Finish user code mode 
--Get distance sensors and IR sensors working 
+- Finish user code mode 
+- Get distance sensors and IR sensors working 
 
 Week of April 15th 
--Test and finish all modes and the logic to switch between them 
+- Test and finish all modes and the logic to switch between them 
 
 Week of April 22nd 
--Debug remaining issues 
+- Debug remaining issues 

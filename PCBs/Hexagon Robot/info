@@ -1,0 +1,277 @@
+{
+  "uuid": "28746bf1a000b1e1535bde024aba26af",
+  "path": "Offline/Hexagon Robot",
+  "name": "Hexagon Robot",
+  "content": "",
+  "created_at": "2024-03-17 15:53:36",
+  "updated_at": "2024-03-17 16:57:57",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "47b241c70312afd8eba0034540141eb7",
+      "title": "Sheet_1",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "983f47c4a7354178b49fc7ba2b547776": 1,
+        "3d1654de851c4aa1a4d202f30a796849": 6,
+        "8f1af7be54ac411489ceeac12f78077f": 1,
+        "3e402906a0f047bdab7d016fd9b30e98": 1,
+        "b5f7f909b2f14def8b8d2d0e61a39144": 1,
+        "7dcc704ea9a4404980b920b1340c7fab": 6,
+        "9daac2b373b4420fafa4dffd85f6d29e": 1,
+        "88b748f9d1f746c8aba508a3352c6d3a": 1,
+        "7f5bc65bac744649bcc5830fc2a17f6a": 2,
+        "4086c6c5574f4cc98c836157b50f790f": 1,
+        "e14bbfac282945a4b4193bfb0fb2ed7e": 1,
+        "c2cd21ee5d664c048ab07ca21d596c4b": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "100uF",
+          1,
+          "100UFX16V CAPACITOR D5.0XF11.0",
+          "C1",
+          {
+            "Supplier Part": "",
+            "Supplier": "My_collection",
+            "Manufacturer Part": "Jweo",
+            "Rated Voltage": "16V",
+            "Contributor": "stefanczykdk",
+            "spiceSymbolName": "CAP-POL-1",
+            "puuid": "14f224c011733d92a7a36c742432e5ad",
+            "uuid": "3e402906a0f047bdab7d016fd9b30e98"
+          }
+        ],
+        [
+          "R0",
+          1,
+          "1.8K RESISTOR 1/2W",
+          "R1",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "jokosays",
+            "spiceSymbolName": "1.8K_R_1/2W",
+            "puuid": "bc16248e321d4adcadb7d4645a145484",
+            "uuid": "7f5bc65bac744649bcc5830fc2a17f6a"
+          }
+        ],
+        [
+          "R1",
+          1,
+          "1.8K RESISTOR 1/2W",
+          "R2",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "jokosays",
+            "spiceSymbolName": "1.8K_R_1/2W",
+            "puuid": "bc16248e321d4adcadb7d4645a145484",
+            "uuid": "7f5bc65bac744649bcc5830fc2a17f6a"
+          }
+        ],
+        [
+          "ESP32-S3-DevKitC-1 RC",
+          1,
+          "ESP32-S2-DEVKITC-1",
+          "U1",
+          {
+            "Manufacturer": "Espressif Manifacturer",
+            "Manufacturer Part": "ESP32-S3-DevKitC-1",
+            "Supplier": "Mouser",
+            "Supplier Part": "ESP32-S2-DevKitC-1",
+            "link": "https://www.espressif.com/en/products/socs/esp32-s2",
+            "Contributor": "remi_chamb",
+            "spiceSymbolName": "ESP32-S2-DevKitC-1 RC",
+            "Package Display": "No",
+            "puuid": "a75834d1a12e40049759868b9810bfe3",
+            "uuid": "983f47c4a7354178b49fc7ba2b547776"
+          }
+        ],
+        [
+          "",
+          6,
+          "HDR-4X1/2.54",
+          "U2,U3,U4,U5,U6,U7",
+          {
+            "Supplier Part": "",
+            "Supplier": "",
+            "Manufacturer": "ReliaPro",
+            "Manufacturer Part": "Female header pitch2.54mm",
+            "Contributor": "akula26",
+            "spiceSymbolName": "Header-Female-2.54_1x4",
+            "puuid": "ada1afa77a5b4f1769cb141959f85336",
+            "uuid": "3d1654de851c4aa1a4d202f30a796849"
+          }
+        ],
+        [
+          "",
+          1,
+          "BUCK_300W_XL4016_UPIM",
+          "U8",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "mahfuzshimanto08",
+            "spiceSymbolName": "SCHLIB_BUCK_300W_XL4016_UPIM_2022-08-20",
+            "puuid": "9598d2620b344ec3a2a35fca7ad08f9a",
+            "uuid": "8f1af7be54ac411489ceeac12f78077f"
+          }
+        ],
+        [
+          "NRF2401L",
+          1,
+          "NRF2401L",
+          "U9",
+          {
+            "Manufacturer Part": "nrf2401l",
+            "Contributor": "freddyka",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "NRF2401L",
+            "puuid": "ebce6c43077d4e9cb8fa91ab473f0605",
+            "uuid": "b5f7f909b2f14def8b8d2d0e61a39144"
+          }
+        ],
+        [
+          "P0_V",
+          2,
+          "14AWG PTH LARGE",
+          "U10,U12",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "P0_Gnd",
+          4,
+          "14AWG PTH LARGE",
+          "U11,U13,U21,U22",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "",
+          1,
+          "DIGITAL BATTERY LOW VOLTAGE PROTECTION",
+          "U14",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "Amazon",
+            "link": "https://www.amazon.com/Digital-Battery-Low-Voltage-Protection/dp/B07929Y5SZ/ref=pd_lpo_1?pd_rd_w=EQZME&content-id=amzn1.sym.116f529c-aa4d-4763-b2b6-4d614ec7dc00&pf_rd_p=116f529c-aa4d-4763-b2b6-4d614ec7dc00&pf_rd_r=ST8X9MNECBZGGV6HWZ3D&pd_rd_wg=QyVaK&pd_rd_r=5db0e1b2-869e-49c6-b655-e6e1dac52072&pd_rd_i=B07929Y5SZ&psc=1#customerReviews",
+            "Contributor": "matthew.hestenes",
+            "spiceSymbolName": "Digital Battery Low Voltage Protection Unit",
+            "puuid": "5166fab76cd44469888d4c7a01654b50",
+            "uuid": "9daac2b373b4420fafa4dffd85f6d29e"
+          }
+        ],
+        [
+          "BMP180 (GY-68)",
+          1,
+          "BMP180 (GY-68)",
+          "U15",
+          {
+            "Supplier": "Adafruit",
+            "Contributor": "slavaki",
+            "spiceSymbolName": "BMP180 (GY-68)",
+            "Manufacturer Part": "",
+            "puuid": "",
+            "uuid": "88b748f9d1f746c8aba508a3352c6d3a"
+          }
+        ],
+        [
+          "",
+          1,
+          "L298N_2",
+          "U16",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "Smevans",
+            "spiceSymbolName": "L298N",
+            "puuid": "e2cfb52755154970aefbeab36fb94929",
+            "uuid": "4086c6c5574f4cc98c836157b50f790f"
+          }
+        ],
+        [
+          "",
+          1,
+          "I2C LCD1602 I2C PCF8574AT",
+          "U19",
+          {
+            "Contributor": "pesonacorp",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "LCD 16X2 I2C",
+            "Manufacturer Part": "",
+            "puuid": "d4542df29a194cbeacb1c4d62f65d02c",
+            "uuid": "e14bbfac282945a4b4193bfb0fb2ed7e"
+          }
+        ],
+        [
+          "NO",
+          1,
+          "TOGGLE SWITCH SPDT RED 3 PIN ON-OFF-ON 3 SPDT SMALL AC 6A/125V 3A/250V",
+          "U20",
+          {
+            "sourceId": "ceKgMGAuL",
+            "Supplier Part": "",
+            "Supplier": "",
+            "Contributor": "hanzfortun09",
+            "spiceSymbolName": "TOGGLESWITCH SPST_SWITCH-SPDT COPY",
+            "Manufacturer Part": "",
+            "puuid": "15071b6f0b0240a5b36fd6d48300c042",
+            "uuid": "c2cd21ee5d664c048ab07ca21d596c4b"
+          }
+        ]
+      ],
+      "updateTime": 1710709077,
+      "createTime": 1710705217,
+      "histories": [],
+      "created_at": "2024-03-17 15:53:37",
+      "updated_at": "2024-03-17 16:57:57"
+    }
+  ],
+  "sort": [],
+  "title": "Hexagon Robot",
+  "foldername": "Hexagon Robot",
+  "schfilename": "Hexagon Robot.json",
+  "schfilemtime": 1710709077848
+}

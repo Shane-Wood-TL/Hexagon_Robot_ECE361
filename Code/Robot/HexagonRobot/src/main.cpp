@@ -1,5 +1,5 @@
 #include <Arduino.h>
-//tickel on pickel
+//This code is for the actual robot itself
 // put function declarations here:
 int myFunction(int, int);
 

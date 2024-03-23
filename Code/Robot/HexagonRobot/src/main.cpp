@@ -1,47 +1,78 @@
 #include <Arduino.h>
-#include <ESP32Servo.h>
 
-Servo motorA;
-Servo motorC;
-Servo motorB;
+//radio libraries
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+//line following library
+#include <PID_v1.h> 
+
+//temp + display libraries
+#include <Wire.h>
+#include <Adafruit_BMP085.h>
+
+
+//class defintions and constants
+#include <constants.h>
+
+
+
+struct PayloadStruct {
+  uint8_t mode; //sw2
+  uint8_t speedX;
+  uint8_t speedY;
+  uint8_t spin;
+  uint8_t eStop;
+};
+
+//radio
+PayloadStruct payload;
+//RF24 radio(ce, csn)
+RF24 radio(CE,SCN);
+bool newData = false;
+int oldState = 0;
+const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
+
+
+
+Adafruit_BMP085 bmp;
+
+
+
+
+class DistanceSensor{
+  private:
+    int Dpin;
+    Adafruit_BMP085 bmp;
+  public:
+    DistanceSensor(int pinV, Adafruit_BMP085 bmpV){
+      Dpin = pinV;
+      bmp = bmpV;
+    }
+    float getDistance(){
+      //need to find the speed of sound given the current temp
+      float adjustedSpeed = 331.4 + (0.606 * bmp.readTemperature());
+      //add pulse + recieve here
+    }
+};
+
+
 
 void setup() {
-  pinMode(6, OUTPUT); //A0
-  pinMode(36, OUTPUT); //A1
+  motor motorA(A0, A1,enA,500,790,2000);
+  motor motorB(B0, B1,enB,500,790,2000);
+  motor motorC(C0, C1,enC,500,790,2000);
 
-  pinMode(41, OUTPUT); //A0
-  pinMode(42, OUTPUT); //A1
 
-  pinMode(1, OUTPUT); //A0
-  pinMode(2, OUTPUT); //A1
-  //pinMode(15, OUTPUT); //enA
+  //pin setups
+
   ESP32PWM::allocateTimer(0);
 	ESP32PWM::allocateTimer(1);
 	ESP32PWM::allocateTimer(2);
 	ESP32PWM::allocateTimer(3);
-  motorA.attach(15);
-  motorB.attach(16);
-  motorC.attach(7);
-  motorA.setPeriodHertz(500);
-  motorB.setPeriodHertz(500);
-  motorC.setPeriodHertz(500);
-
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  digitalWrite(6, LOW);
-  digitalWrite(36,HIGH);
-  motorA.writeMicroseconds(2000);
 
-   digitalWrite(41, LOW);
-  digitalWrite(42,HIGH);
-  motorB.writeMicroseconds(2000);
-
-   digitalWrite(1, LOW);
-  digitalWrite(2,HIGH);
-  motorC.writeMicroseconds(2000);
-  //~790 lowest
-  //2000 (100%) = max
-  //speed barely changes
 }

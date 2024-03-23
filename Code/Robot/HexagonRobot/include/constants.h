@@ -76,3 +76,55 @@ class motor{
       motorX.writeMicroseconds(0);
     }
 };
+
+
+
+
+
+class distances{
+  private: 
+    DistanceSensor *D[6];
+    float DistanceB;
+    int sensor = 0;
+    int sensorA;
+    int sensorC;
+    float perpendicularDistance(float distance){
+      return distance  * cos(0.785398); //45 deg to rads
+    }
+  public:
+    distances(DistanceSensor *A, DistanceSensor *B, DistanceSensor *C, DistanceSensor *D, DistanceSensor *E, const DistanceSensor *F){
+      D[0] = *A;
+      D[1] = *B;
+      D[2] = *C;
+      D[3] = *D;
+      D[4] = *E;
+      D[5] = *F;
+    }
+    float getClosest(){
+      DistanceB = 1000;
+      for(int i = 0; i <= 5; i++){
+        float distance = D[i]->getDistance();
+        if(distance < DistanceB){
+          DistanceB = distance;
+          sensor = i;
+        }
+      }
+    }
+    void getNearSensor(){
+      int sensorA = sensor++;
+      if (sensorA > 5){
+        sensorA = 0;
+      }
+
+      int sensorB = sensor--;
+      if (sensorB < 0){
+        sensorB = 5;
+      }
+    }
+    float distanceA(){
+      return perpendicularDistance(D[sensorA]->getDistance());
+    }
+    float distanceB(){
+      return perpendicularDistance(D[sensorC]->getDistance());
+    }
+};

@@ -8,6 +8,9 @@
 //line following library
 #include <PID_v1.h> 
 
+//wall following library
+#include <math.h>
+
 //temp + display libraries
 #include <Wire.h>
 #include <Adafruit_BMP085.h>
@@ -59,10 +62,15 @@ class DistanceSensor{
 
 
 
+
+
+
+motor motorA(A0, A1,enA,500,790,2000);
+motor motorB(B0, B1,enB,500,790,2000);
+motor motorC(C0, C1,enC,500,790,2000);
+
 void setup() {
-  motor motorA(A0, A1,enA,500,790,2000);
-  motor motorB(B0, B1,enB,500,790,2000);
-  motor motorC(C0, C1,enC,500,790,2000);
+
 
 
   //pin setups
@@ -74,5 +82,27 @@ void setup() {
 }
 
 void loop() {
+  if (payload.eStop == 1){
+    motorA.brake();
+    motorB.brake();
+    motorC.brake();
+  }
+  switch(payload.mode){
+    case 0:{ //user control mode
+      motorA.setSpeed(payload.speedX);
+      motorA.setSpeed(payload.speedY);
+    }
+    case 1:{ //wall following
+      //find which sensor is closest to wall (B)
+      //match the 2 (A,C)adjacent sensors in distance to have a edge parallel with the wall
+      //drive forward keeping A and C equal distance and B fairly close (<30 cm)
+      //if a wall is detected in front, switch that sensor to be A
+      //if 2 walls are detected, pick a random one
 
+    }
+    case 2:{ //line following
+      //use pid to increase speed and reduce the bouncing from one extreme to the other
+      //has no ability to detect intersections (tmk) so it can only follow line paths
+    }
+  }
 }

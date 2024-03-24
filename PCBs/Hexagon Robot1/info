@@ -1,0 +1,417 @@
+{
+  "uuid": "0f59db29df8f162d7240fed9853d3a18",
+  "path": "Offline/Hexagon Robot1",
+  "name": "Hexagon Robot1",
+  "content": "",
+  "created_at": "2024-03-18 16:34:15",
+  "updated_at": "2024-03-24 10:54:10",
+  "stick": "",
+  "documents": [
+    {
+      "uuid": "a52e03b69202665eb2aca5333151d0b5",
+      "title": "Main",
+      "description": "",
+      "docType": "1",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "3d1654de851c4aa1a4d202f30a796849": 8,
+        "3e402906a0f047bdab7d016fd9b30e98": 1,
+        "b5f7f909b2f14def8b8d2d0e61a39144": 1,
+        "7dcc704ea9a4404980b920b1340c7fab": 16,
+        "7f5bc65bac744649bcc5830fc2a17f6a": 2,
+        "c2cd21ee5d664c048ab07ca21d596c4b": 1,
+        "5903844aca264823b8abefbfa53fee97": 5,
+        "fffbf4639c6a41269b51874812ce4c4a": 1
+      },
+      "BOM": [
+        [
+          "Value",
+          "Quantity",
+          "Package",
+          "Components",
+          "CustomPara"
+        ],
+        [
+          "100uF",
+          1,
+          "100UFX16V CAPACITOR D5.0XF11.0",
+          "C2",
+          {
+            "Supplier Part": "",
+            "Supplier": "My_collection",
+            "Manufacturer Part": "Jweo",
+            "Rated Voltage": "16V",
+            "Contributor": "stefanczykdk",
+            "spiceSymbolName": "CAP-POL-1",
+            "puuid": "14f224c011733d92a7a36c742432e5ad",
+            "uuid": "3e402906a0f047bdab7d016fd9b30e98"
+          }
+        ],
+        [
+          "Bat+",
+          2,
+          "14AWG PTH LARGE",
+          "H1,H3",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "Bat-",
+          2,
+          "14AWG PTH LARGE",
+          "H2,H5",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "LVGnd",
+          1,
+          "14AWG PTH LARGE",
+          "H4",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "LV7.7V",
+          1,
+          "14AWG PTH LARGE",
+          "H6",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "A_Gnd",
+          1,
+          "14AWG PTH LARGE",
+          "H11",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "B_Gnd",
+          1,
+          "14AWG PTH LARGE",
+          "H12",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "C_Gnd",
+          1,
+          "14AWG PTH LARGE",
+          "H13",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "A_V+",
+          1,
+          "14AWG PTH LARGE",
+          "H14",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "B_V+",
+          1,
+          "14AWG PTH LARGE",
+          "H15",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "C_V+",
+          1,
+          "14AWG PTH LARGE",
+          "H16",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "Buck+",
+          1,
+          "14AWG PTH LARGE",
+          "H17",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "Buck-",
+          1,
+          "14AWG PTH LARGE",
+          "H18",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "Buck3v3",
+          1,
+          "14AWG PTH LARGE",
+          "H19",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "BuckGnd",
+          1,
+          "14AWG PTH LARGE",
+          "H20",
+          {
+            "Manufacturer Part": "Wire Hole",
+            "Contributor": "dropTarget",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "Wire Hole 14AWG",
+            "puuid": "6cce713c8e9846b484d4be849601ecb5",
+            "uuid": "7dcc704ea9a4404980b920b1340c7fab"
+          }
+        ],
+        [
+          "Header-Female-2.54_1x3",
+          5,
+          "HDR-3X1/2.54",
+          "P9,P10,P11,P12,P13",
+          {
+            "Supplier": "LCSC",
+            "Manufacturer": "ReliaPro",
+            "Manufacturer Part": "Header-Female-2.54_1x4",
+            "Supplier Part": "C124413",
+            "Contributor": "resende.vitor",
+            "spiceSymbolName": "Header-Female-2.54_1x3",
+            "puuid": "fd00022391e14eb0965d91edfd83599f",
+            "uuid": "5903844aca264823b8abefbfa53fee97"
+          }
+        ],
+        [
+          "R1",
+          1,
+          "1.8K RESISTOR 1/2W",
+          "R3",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "jokosays",
+            "spiceSymbolName": "1.8K_R_1/2W",
+            "puuid": "bc16248e321d4adcadb7d4645a145484",
+            "uuid": "7f5bc65bac744649bcc5830fc2a17f6a"
+          }
+        ],
+        [
+          "R0",
+          1,
+          "1.8K RESISTOR 1/2W",
+          "R4",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier Part": "",
+            "Supplier": "",
+            "link": "",
+            "Contributor": "jokosays",
+            "spiceSymbolName": "1.8K_R_1/2W",
+            "puuid": "bc16248e321d4adcadb7d4645a145484",
+            "uuid": "7f5bc65bac744649bcc5830fc2a17f6a"
+          }
+        ],
+        [
+          "NO",
+          8,
+          "HDR-4X1/2.54",
+          "U2,U28,U29,U30,U31,U32,U33,U35",
+          {
+            "Supplier Part": "",
+            "Supplier": "",
+            "Manufacturer": "ReliaPro",
+            "Manufacturer Part": "Female header pitch2.54mm",
+            "Contributor": "akula26",
+            "spiceSymbolName": "Header-Female-2.54_1x4",
+            "puuid": "ada1afa77a5b4f1769cb141959f85336",
+            "uuid": "3d1654de851c4aa1a4d202f30a796849"
+          }
+        ],
+        [
+          "ESP32S3 TypeC",
+          1,
+          "ESP32S3 TYPEC",
+          "U3",
+          {
+            "Manufacturer": "",
+            "Manufacturer Part": "",
+            "Supplier": "",
+            "Supplier Part": "",
+            "link": "",
+            "Contributor": "Guest",
+            "spiceSymbolName": "ESP32S3 TypeC",
+            "puuid": "c04f031d8a72445098c6e87a7e371796",
+            "uuid": "fffbf4639c6a41269b51874812ce4c4a"
+          }
+        ],
+        [
+          "NO",
+          1,
+          "TOGGLE SWITCH SPDT RED 3 PIN ON-OFF-ON 3 SPDT SMALL AC 6A/125V 3A/250V",
+          "U22",
+          {
+            "sourceId": "ceKgMGAuL",
+            "Supplier Part": "",
+            "Supplier": "",
+            "Contributor": "hanzfortun09",
+            "spiceSymbolName": "TOGGLESWITCH SPST_SWITCH-SPDT COPY",
+            "Manufacturer Part": "",
+            "puuid": "15071b6f0b0240a5b36fd6d48300c042",
+            "uuid": "c2cd21ee5d664c048ab07ca21d596c4b"
+          }
+        ],
+        [
+          "NRF2401L",
+          1,
+          "NRF2401L",
+          "U26",
+          {
+            "Manufacturer Part": "nrf2401l",
+            "Contributor": "freddyka",
+            "Supplier Part": "",
+            "Supplier": "",
+            "spiceSymbolName": "NRF2401L",
+            "puuid": "ebce6c43077d4e9cb8fa91ab473f0605",
+            "uuid": "b5f7f909b2f14def8b8d2d0e61a39144"
+          }
+        ]
+      ],
+      "updateTime": 1711292050,
+      "createTime": 1710794056,
+      "histories": [],
+      "created_at": "2024-03-18 16:34:16",
+      "updated_at": "2024-03-24 10:54:10"
+    },
+    {
+      "uuid": "10ef548e5752b18d0c244d333d8da14f",
+      "puuid": "0f59db29df8f162d7240fed9853d3a18",
+      "title": "PCB_Hexagon Robot1",
+      "filename": "PCB_Hexagon Robot1.json",
+      "description": "",
+      "docType": "3",
+      "master": "",
+      "thumb": "/images/thumb-default.png",
+      "components": {
+        "c04f031d8a72445098c6e87a7e371796": 1,
+        "ada1afa77a5b4f1769cb141959f85336": 8,
+        "6cce713c8e9846b484d4be849601ecb5": 16,
+        "14f224c011733d92a7a36c742432e5ad": 1,
+        "fd00022391e14eb0965d91edfd83599f": 5,
+        "bc16248e321d4adcadb7d4645a145484": 2,
+        "15071b6f0b0240a5b36fd6d48300c042": 1,
+        "ebce6c43077d4e9cb8fa91ab473f0605": 1
+      },
+      "BOM": [],
+      "updateTime": 1711085692,
+      "createTime": 1710794676,
+      "histories": [],
+      "created_at": "2024-03-18 16:44:36",
+      "updated_at": "2024-03-22 01:34:52"
+    }
+  ],
+  "sort": [
+    "2c8c18e6c21765106b48161782680c1e",
+    "a52e03b69202665eb2aca5333151d0b5"
+  ],
+  "title": "Hexagon Robot1",
+  "foldername": "Hexagon Robot1",
+  "schfilename": "Hexagon Robot1.json",
+  "schfilemtime": 1711292050852
+}

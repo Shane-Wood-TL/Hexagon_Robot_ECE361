@@ -81,6 +81,43 @@ class motor{
 
 
 
+
+class DistanceSensor{
+  private:
+    int Dpin;
+    float speedOfSound;
+  public:
+    DistanceSensor(int pinV, float speed){
+      Dpin = pinV;
+      speedOfSound = speed;
+    }
+
+    
+    float getDistance(){
+      //send a pulse out
+      pinMode(Dpin, OUTPUT);
+      digitalWrite(Dpin, LOW);
+      delayMicroseconds(2);
+      digitalWrite(Dpin, HIGH);
+      delayMicroseconds(10);
+      digitalWrite(Dpin, LOW);
+
+      //check for pulse input (switch pin modes)
+      pinMode(Dpin, INPUT);
+      float lenght = pulseIn(Dpin, HIGH);
+
+      return lenght * speedOfSound; 
+    }
+
+
+    void setSpeed(float speed){
+      speedOfSound = speed;
+    }
+};
+
+
+
+
 class distances{
   private: 
     DistanceSensor *D[6];
@@ -88,18 +125,25 @@ class distances{
     int sensor = 0;
     int sensorA;
     int sensorC;
+    Adafruit_BMP085 bmp;
+
     float perpendicularDistance(float distance){
       return distance  * cos(0.785398); //45 deg to rads
     }
+
+
   public:
-    distances(DistanceSensor *A, DistanceSensor *B, DistanceSensor *C, DistanceSensor *D, DistanceSensor *E, const DistanceSensor *F){
+    distances(DistanceSensor *A, DistanceSensor *B, DistanceSensor *C, DistanceSensor *D, DistanceSensor *E, const DistanceSensor *F, Adafruit_BMP085 *bmpV){
       D[0] = *A;
       D[1] = *B;
       D[2] = *C;
       D[3] = *D;
       D[4] = *E;
       D[5] = *F;
+      bmp = *bmpV;
     }
+
+
     float getClosest(){
       DistanceB = 1000;
       for(int i = 0; i <= 5; i++){
@@ -109,7 +153,10 @@ class distances{
           sensor = i;
         }
       }
+      return DistanceB;
     }
+
+
     void getNearSensor(){
       int sensorA = sensor++;
       if (sensorA > 5){
@@ -121,10 +168,22 @@ class distances{
         sensorB = 5;
       }
     }
+
+
     float distanceA(){
       return perpendicularDistance(D[sensorA]->getDistance());
     }
+
+
     float distanceB(){
       return perpendicularDistance(D[sensorC]->getDistance());
+    }
+
+
+    void updateSpeed(){
+      float adjustedSpeed = ((331.4 + (0.606 * bmp.readTemperature()))/pow(10, 3)); //convert from m/s to cm/us 10^-3 / 10^-6 = 10^-3
+      for(int i = 0; i <= 5; i++){
+        D[i]->setSpeed(adjustedSpeed);
+      }
     }
 };

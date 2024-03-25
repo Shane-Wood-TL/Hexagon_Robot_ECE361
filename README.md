@@ -2,6 +2,10 @@
  
 ### Shane Wood and Logan Martin 
 
+### Render of robot
+![robo2](https://github.com/Shane-Wood-TL/Hexagon_Robot_ECE361/assets/15756211/02b7d207-e545-4fad-8f13-c57677bbf4a8)
+
+
 ### Abstract: 
 For this design project, we are planning to develop a robotics platform by creating a 3-wheeled robot. This design also includes a controller so the robot can be controlled remotely over 2.4 GHz using an NRF2401 module. Our design currently has 3 main modes planned; user control with the controller, fully autonomous (wall following), and line following. We plan to use the ESP32-S3 for the microcontrollers running on the Arduino framework for both the controller and the robot. The robot will also feature distance sensors for the autonomous modes and IR sensors for the line-following mode. The robot will have a 3d printed base and omni wheels, the project will also have 2 custom PCBs, one for the robot itself and the other for the controller. 
 

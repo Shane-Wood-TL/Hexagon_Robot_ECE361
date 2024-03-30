@@ -19,11 +19,14 @@
 //class defintions and constants
 #include <constants.h>
 
-float motorFreq = 500;
+float motorFreq = 500; 
 float minOnTime = 790;
 float maxOnTime = 2000;
 
 float intialSpeedOfSound = 0.0343; //in cm/mirco second 
+
+float v1,v2,v3; //Motor speeds
+float spinDir;
 
 void getData();
 
@@ -34,7 +37,7 @@ struct PayloadStruct {
   uint8_t speedX;
   uint8_t speedY;
   uint8_t spin;
-  uint8_t eStop;
+  bool eStop;
 };
 
 
@@ -57,9 +60,9 @@ LiquidCrystal_I2C lcd(0x27,20,4);
 
 
 //motor class instances
-motor motorA(A0, A1,enA,motorFreq,minOnTime,maxOnTime);
-motor motorB(B0, B1,enB,motorFreq,minOnTime,maxOnTime);
-motor motorC(C0, C1,enC,motorFreq,minOnTime,maxOnTime);
+motor motorA(A0, A1,enA,motorFreq,minOnTime,maxOnTime); //Mtr1
+motor motorB(B0, B1,enB,motorFreq,minOnTime,maxOnTime); //Mtr2
+motor motorC(C0, C1,enC,motorFreq,minOnTime,maxOnTime); //Mtr3
 
 
 
@@ -97,7 +100,7 @@ void setup() {
   //begin SPI
   SPI.begin(SCK, MISO, MOSI);
   
-
+ 
   // begin radio
   if (!radio.begin()) {
     Serial.println(F("radio hardware is not responding!!"));
@@ -108,7 +111,7 @@ void setup() {
   radio.setDataRate(RF24_250KBPS);
   radio.openReadingPipe(1, thisSlaveAddress);
   radio.startListening();
-  Serial.println("radio Active");
+  Serial.println("Radio Active");
 
   //line following pins
   pinMode(L0, INPUT);
@@ -117,7 +120,7 @@ void setup() {
 
 void loop() {
   getData();
-  if (payload.eStop == 1){
+  if (payload.eStop == true){
     motorA.brake();
     motorB.brake();
     motorC.brake();
@@ -125,8 +128,11 @@ void loop() {
   }
   switch(payload.mode){
     case 0:{ //user control mode
-      motorA.setSpeed(payload.speedX);
-      motorA.setSpeed(payload.speedY);
+      invKin(payload.speedX,payload.speedY,v1,v2,v3)
+      motorA.setSpeed(v1); 
+      motorB.setSpeed(v2);
+      motorC.setSpeed(v3);
+
       break;
     }
     case 1:{ //wall following
@@ -143,6 +149,41 @@ void loop() {
       int L0Value = digitalRead(L0);
       int L1Value = digitalRead(L1);
       break;
+    }
+    case3:{ //Spin
+          float sX = payload.speedX;
+          float sY = payload.speedY;
+          
+          float positiveSpin = 1;
+          float negativeSpin = -1;
+
+          if(sX >= sY){
+            if(sX > JOYSTICK_CENTER){
+              spinDir = positiveSpin;
+            }
+            else if(sX < JOYSTICK_CENTER){
+              spinDir = negativeSpin;
+            }
+            else if(sX == JOYSTICK_CENTER)
+            {
+              spinDir = 0;
+            }
+          }
+          else if(sX < sY){
+            if(sY > JOYSTICK_CENTER){
+              spinDir = positiveSpin;
+            }
+            else if(sY < JOYSTICK_CENTER){
+              spinDir = negativeSpin;
+            }
+            else if(sY == JOYSTICK_CENTER)
+            {
+              spinDir = 0;
+            }
+          }
+          motorA.setSpeed(spinDir); 
+          motorB.setSpeed(spinDir);
+          motorC.setSpeed(spinDir);
     }
     default:{
       motorA.brake();
@@ -161,4 +202,15 @@ void getData(){
   //  }else{
   //   payload.eStop ==true; 
   }
+}
+
+//sets the motor speeds and direction
+void invKin(uint8_t speedX,uint8_t speedY,float v1, float v2, float v3)
+{
+  float sX = speedX;
+  float sY = speedY;
+
+  v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
+  v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
+  v3 = speedY;
 }

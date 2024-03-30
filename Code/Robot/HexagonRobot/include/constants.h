@@ -33,6 +33,7 @@
 #define L0 18
 #define L1 8
 
+#define JOYSTICK_CENTER 128
 
 
 class motor{

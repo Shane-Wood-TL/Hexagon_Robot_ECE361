@@ -19,6 +19,7 @@
 //class defintions and constants
 #include <constants.h>
 
+
 float motorFreq = 500; 
 float minOnTime = 790;
 float maxOnTime = 2000;
@@ -43,29 +44,28 @@ struct PayloadStruct {
 
 
 
-//radio
-PayloadStruct payload;
-//RF24 radio(ce, csn)
-RF24 radio(CE,SCN);
-bool newData = false;
-int oldState = 0;
-const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
+// //radio
+// PayloadStruct payload;
+// RF24 radio(CE,SCN);
+// bool newData = false;
+// int oldState = 0;
+// const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 
 
-//temperature sensor
-Adafruit_BMP085 bmp;
+// //temperature sensor
+// Adafruit_BMP085 bmp;
 
-//display
-LiquidCrystal_I2C lcd(0x27,20,4);
+// //display
+// LiquidCrystal_I2C lcd(0x27,20,4);
 
 
 //motor class instances
-motor motorA(A0, A1,enA,motorFreq,minOnTime,maxOnTime); //Mtr1
-motor motorB(B0, B1,enB,motorFreq,minOnTime,maxOnTime); //Mtr2
-motor motorC(C0, C1,enC,motorFreq,minOnTime,maxOnTime); //Mtr3
+// motor motorA(A0_, A1_, enA_, 2); //Mtr1
+// motor motorB(B0_, B1_, enB_, 1); //Mtr2
+// motor motorC(C0_, C1_, enC_, 0); //Mtr3
 
 
-
+/*
 //distance sensor instances
 DistanceSensor Dis0(D0,intialSpeedOfSound);
 DistanceSensor Dis1(D1,intialSpeedOfSound);
@@ -77,31 +77,29 @@ DistanceSensor Dis5(D5,intialSpeedOfSound);
 //distance array instance
 distances distanceArray(&Dis0, &Dis1, &Dis2, &Dis3, &Dis4, &Dis5, &bmp);
 
-
+*/
 
 
 
 void setup() {
   //PWM for servo library (would like to use analog write if possible)
-  ESP32PWM::allocateTimer(0);
-	ESP32PWM::allocateTimer(1);
-	ESP32PWM::allocateTimer(2);
-	ESP32PWM::allocateTimer(3);
 
+  Serial.begin(115200);
 
   //i2c setup
-  Wire.begin(SDA,SCL); //SDA, SCL
-  lcd.init();           
-  lcd.backlight();
-  lcd.clear();
-  lcd.print("working");
+  //Wire.begin(SDA,SCL); //SDA, SCL
+  // lcd.init();           
+  // lcd.backlight();
+  // lcd.clear();
+  // lcd.print("working");
 
 
   //begin SPI
-  SPI.begin(SCK, MISO, MOSI);
+  //SPI.begin(SCK, MISO, MOSI);
   
  
   // begin radio
+  /*
   if (!radio.begin()) {
     Serial.println(F("radio hardware is not responding!!"));
     lcd.print("no radio");
@@ -116,22 +114,101 @@ void setup() {
   //line following pins
   pinMode(L0, INPUT);
   pinMode(L1, INPUT);
+  */
+
+
+  // ledcSetup(motorA.channel, 1000, 8); // channel 0, 5000 Hz, 8-bit resolution
+  // ledcSetup(motorB.channel, 1000, 8); // channel 0, 5000 Hz, 8-bit resolution
+  // ledcSetup(motorC.channel, 1000, 8); // channel 0, 5000 Hz, 8-bit resolution
+  
+  // Attach the PWM channel to the LED pin
+  // ledcAttachPin(motorA.enP, motorA.channel);
+  // ledcAttachPin(motorB.enP, motorB.channel);
+  // ledcAttachPin(motorC.enP, motorC.channel);
+  pinMode(enA_, OUTPUT);
+  pinMode(A0_, OUTPUT);
+  pinMode(A1_, OUTPUT);
+
+  pinMode(enB_, OUTPUT);
+  pinMode(B0_, OUTPUT);
+  pinMode(B1_, OUTPUT);
+
+  pinMode(enC_, OUTPUT);
+  pinMode(C0_, OUTPUT);
+  pinMode(C1_, OUTPUT);
+  
+  ledcSetup(0,1000,8);
+  ledcSetup(3,1000,8);
+  ledcSetup(7,1000,8);
+
+
+  ledcAttachPin(enA_, 0);
+  ledcAttachPin(enB_, 3);
+  ledcAttachPin(enC_, 7);
+
 }
 
 void loop() {
-  getData();
+  Serial.println("in loop");
+  digitalWrite(A0_, HIGH);
+  digitalWrite(A1_, LOW);
+  digitalWrite(B0_, HIGH);
+  digitalWrite(B1_, LOW);
+  digitalWrite(C0_, HIGH);
+  digitalWrite(C1_, LOW);
+  // digitalWrite(enA_, HIGH);
+  // digitalWrite(enB_, HIGH);
+  // digitalWrite(enC_, HIGH);
+
+  for (int dutyCycle = 150; dutyCycle <= 255; dutyCycle++) {
+    // Set PWM duty cycle
+    // motorA.setSpeed(dutyCycle);
+    // motorB.setSpeed(dutyCycle);
+    // motorC.setSpeed(dutyCycle);
+    ledcWrite(0, dutyCycle);
+    ledcWrite(3, dutyCycle);
+    ledcWrite(7, dutyCycle);
+    delay(100); // Wait for a short duration for gradual change
+  }
+  
+  // Decrease brightness gradually
+  for (int dutyCycle = 255; dutyCycle >= 150; dutyCycle--) {
+    // Set PWM duty cycle
+    // motorA.setSpeed(dutyCycle);
+    // motorB.setSpeed(dutyCycle);
+    // motorC.setSpeed(dutyCycle);
+    ledcWrite(0, dutyCycle);
+    ledcWrite(3, dutyCycle);
+    ledcWrite(7, dutyCycle);
+    delay(100); // Wait for a short duration for gradual change
+  }
+
+
+    //getData();
+  // motorA.setSpeed(100);
+  // for (int i = 0; i <= 255; i++) {
+  //   // Print the current value of i
+  //   motorA.setSpeed(i);
+  //   delay(100); // Delay for readability, adjust as needed
+  // }
+
+  /*
+  payload.mode = 0;
+  payload.speedX = 100;
+  payload.speedY = 100;
   if (payload.eStop == true){
     motorA.brake();
-    motorB.brake();
-    motorC.brake();
+    //motorB.brake();
+    //motorC.brake();
     
   }
   switch(payload.mode){
     case 0:{ //user control mode
-      invKin(payload.speedX,payload.speedY,v1,v2,v3)
-      motorA.setSpeed(v1); 
-      motorB.setSpeed(v2);
-      motorC.setSpeed(v3);
+      float *v1,*v2,*v3;
+      invKin(payload.speedX,payload.speedY,v1,v2,v3);
+      motorA.setSpeed(*v1); 
+      //motorB.setSpeed(*v2);
+      //motorC.setSpeed(*v3);
 
       break;
     }
@@ -182,35 +259,33 @@ void loop() {
             }
           }
           motorA.setSpeed(spinDir); 
-          motorB.setSpeed(spinDir);
-          motorC.setSpeed(spinDir);
+          //motorB.setSpeed(spinDir);
+          //motorC.setSpeed(spinDir);
     }
     default:{
       motorA.brake();
-      motorB.brake();
-      motorC.brake();
+      //motorB.brake();
+      //motorC.brake();
     }
   }
+  */
 }
 
 
 //gets data from radio, checks if data was recieved
 void getData(){
-   if (radio.available()) {
-    radio.read(&payload, sizeof(payload));
-    newData = true;
-  //  }else{
-  //   payload.eStop ==true; 
-  }
+  //  if (radio.available()) {
+  //   radio.read(&payload, sizeof(payload));
+  //   newData = true;
+  // //  }else{
+  // //   payload.eStop ==true; 
+  // }
 }
 
 //sets the motor speeds and direction
-void invKin(uint8_t speedX,uint8_t speedY,float v1, float v2, float v3)
+void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3)
 {
-  float sX = speedX;
-  float sY = speedY;
-
-  v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
-  v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
-  v3 = speedY;
+    *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
+    *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
+    *v3 = speedY;
 }

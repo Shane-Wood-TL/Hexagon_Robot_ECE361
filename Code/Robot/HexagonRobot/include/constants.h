@@ -1,21 +1,21 @@
 #include <Arduino.h>
-#include <ESP32Servo.h>
+#include <esp32_pwm.h>
 
 
 #define SDA 4
 #define SCL 5
 
-#define A0 6
-#define A1 36
-#define enA 15
+#define A0_ 6
+#define A1_ 36
+#define enA_ 15
 
-#define B0 42
-#define B1 41
-#define enB 16
+#define B0_ 42
+#define B1_ 41
+#define enB_ 16
 
-#define C0 1
-#define C1 2
-#define enC 7
+#define C0_ 1
+#define C1_ 2
+#define enC_ 7
 
 #define D0 37
 #define D1 17
@@ -34,28 +34,24 @@
 #define L1 8
 
 #define JOYSTICK_CENTER 128
-
+#define PWM_FREQ 1000
 
 class motor{
   private:
     int P0;
     int P1;
-    float freq;
-    float minFreq;
-    float maxFreq;
-    Servo motorX;
   public:
-    motor(int P0V, int P1V, int enPV, float freqV, float minFreqV, float maxFreqV){
+    int channel;
+    int enP;
+    motor(int P0V, int P1V, int enPV, int channelV){
       P0 = P0V;
       P1 = P1V;
+      enP = enPV;
       pinMode(P0, OUTPUT);
       pinMode(P1, OUTPUT);
-      minFreq = minFreqV; 
-      maxFreq = maxFreqV;
-      motorX.attach(enPV);
-      motorX.setPeriodHertz(freqV);
+      pinMode(enP, OUTPUT);
+      channel = channelV;
     }
-    float speed;
     void setSpeed(float speed){
       if(speed == 0){
         brake();
@@ -63,18 +59,15 @@ class motor{
         //move forward
         digitalWrite(P0, HIGH);
         digitalWrite(P1, LOW);
-        motorX.writeMicroseconds(map(speed, 0, 255, minFreq, maxFreq));
       }else if (speed < 0){
         //move forward
         digitalWrite(P0, LOW);
         digitalWrite(P1, HIGH);
-        motorX.writeMicroseconds(map(speed, 0, 255, minFreq, maxFreq));
       }
     }
     void brake(){
       digitalWrite(P0, HIGH);
       digitalWrite(P1, HIGH);
-      motorX.writeMicroseconds(0);
     }
 };
 
@@ -188,3 +181,6 @@ class distances{
       }
     }
 };
+
+
+void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3);

@@ -1,3 +1,15 @@
+#include <Arduino.h>
+
+//radio libraries
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+//display libraries
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+
 #define MISO 10
 #define MOSI 11
 #define SCK 12
@@ -25,3 +37,46 @@
 #define X1 18
 #define Y1 8
 #define J1 9
+
+#define maxStates 3
+
+
+
+
+
+struct PayloadStruct {
+  uint8_t mode;   //simple mode, basic int
+  uint8_t speedX; //a int centered at 127
+  uint8_t speedY; //a int centered at 127
+  uint8_t spin;   //a int centered at 127
+  uint8_t eStop;  // bascially a bool
+};
+
+struct inputValues{
+  //switches
+  int S0V;
+  int S1V;
+  int S2V;
+  int S3V;
+  int S4V;
+  int S5V;
+  int S6V;
+  int S7V;
+  int S8V;
+  int S9V;
+  //joystick values
+  float J0XV;
+  float J0YV;
+  int J0JV;
+  float J1XV;
+  float J1YV;
+  int J1JV;
+};
+
+
+
+
+void updateMenu(int state, PayloadStruct payload);
+int decState(int state);
+int incState(int state);
+void updateAll(inputValues &values);

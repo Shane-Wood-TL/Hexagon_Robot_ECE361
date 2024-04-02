@@ -170,4 +170,4 @@ class distances{
 };
 
 
-void invKin(int speedX, int speedY, float* v1, float* v2, float* v3);
+void invKin(int speedX, int speedY, int spin, float* v1, float* v2, float* v3);

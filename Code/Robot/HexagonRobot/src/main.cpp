@@ -232,7 +232,7 @@ void loop() {
 
 
 
-  invKin(0,254,&v1,&v2,&v3);
+  invKin(0,254,0,&v1,&v2,&v3);
   Serial.print(v1);
   Serial.print(" ");
   Serial.print(v2);
@@ -241,14 +241,27 @@ void loop() {
   ledcWrite(0, abs(255));
   ledcWrite(3, abs(255));
   ledcWrite(7, abs(255));
-  delay(50);
-  ledcWrite(0, abs(v1)+10);
-  ledcWrite(3, abs(v2)+10);
-  ledcWrite(7, abs(v3));
-
+  delay(5);
   
-  digitalWrite(A0_, HIGH);
-  digitalWrite(A1_, LOW);
+  float f1, f2, f3;
+  //f1 = map(abs(v1), 0, 255, 150, 255);
+  //f2 = map(abs(v2), 0, 255, 150, 255);
+  //f3 = map(abs(v3), 0, 255, 150, 255);
+
+  // ledcWrite(0, 150);
+  // ledcWrite(3, 210);
+  // ledcWrite(7, 255);
+  ledcWrite(0,abs(v1)-40);
+  ledcWrite(3,abs(v2)+40);
+  ledcWrite(7,abs(v3));
+  Serial.print(f1);
+  Serial.print(" ");
+  Serial.print(f2);
+  Serial.print(" ");
+  Serial.println(f3);
+  
+  digitalWrite(A0_, LOW);
+  digitalWrite(A1_, HIGH);
   digitalWrite(B0_, LOW);
   digitalWrite(B1_, HIGH);
   digitalWrite(C0_, HIGH);
@@ -395,11 +408,20 @@ void getData(){
 }
 
 //sets the motor speeds and direction
-void invKin(int speedX, int speedY, float* v1, float* v2, float* v3)
+void invKin(int speedX, int speedY, int spin, float* v1, float* v2, float* v3)
 {
-    *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
-    *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
+    // *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
+    // *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
+    // *v3 = speedY;
+
+    // *v1 = speedX - (speedY *0.66) - spin;
+    // *v2 = speedX + (speedY *0.66) + spin;
+    // *v3 = speedY - spin;
+
+    *v1 = (sqrt(2)/2) * speedX + (-sqrt(2)/2) * speedY;
+    *v2 = (-sqrt(2)/2) * speedX + (-sqrt(2)/2) * speedY;
     *v3 = speedY;
+
 }
 
 

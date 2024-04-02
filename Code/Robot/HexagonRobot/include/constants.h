@@ -1,5 +1,4 @@
 #include <Arduino.h>
-#include <esp32_pwm.h>
 
 
 #define SDA 4
@@ -47,24 +46,12 @@ class motor{
       P0 = P0V;
       P1 = P1V;
       enP = enPV;
-      pinMode(P0, OUTPUT);
-      pinMode(P1, OUTPUT);
-      pinMode(enP, OUTPUT);
+      // pinMode(P0, OUTPUT);
+      // pinMode(P1, OUTPUT);
+      // pinMode(enP, OUTPUT);
       channel = channelV;
     }
-    void setSpeed(float speed){
-      if(speed == 0){
-        brake();
-      }else if (speed > 0){
-        //move forward
-        digitalWrite(P0, HIGH);
-        digitalWrite(P1, LOW);
-      }else if (speed < 0){
-        //move forward
-        digitalWrite(P0, LOW);
-        digitalWrite(P1, HIGH);
-      }
-    }
+    void setSpeed(float speed);
     void brake(){
       digitalWrite(P0, HIGH);
       digitalWrite(P1, HIGH);

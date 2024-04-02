@@ -60,9 +60,9 @@ struct PayloadStruct {
 
 
 //motor class instances
-// motor motorA(A0_, A1_, enA_, 2); //Mtr1
-// motor motorB(B0_, B1_, enB_, 1); //Mtr2
-// motor motorC(C0_, C1_, enC_, 0); //Mtr3
+motor motorA(A0_, A1_, enA_, 2); //Mtr1
+motor motorB(B0_, B1_, enB_, 1); //Mtr2
+motor motorC(C0_, C1_, enC_, 0); //Mtr3
 
 
 /*
@@ -145,43 +145,99 @@ void setup() {
   ledcAttachPin(enA_, 0);
   ledcAttachPin(enB_, 3);
   ledcAttachPin(enC_, 7);
+  Serial.println("setupDone");
 
 }
 
 void loop() {
   Serial.println("in loop");
-  digitalWrite(A0_, HIGH);
-  digitalWrite(A1_, LOW);
-  digitalWrite(B0_, HIGH);
-  digitalWrite(B1_, LOW);
-  digitalWrite(C0_, HIGH);
-  digitalWrite(C1_, LOW);
+  // digitalWrite(A0_, LOW);
+  // digitalWrite(A1_, HIGH);
+  // digitalWrite(B0_, HIGH);
+  // digitalWrite(B1_, LOW);
+  // digitalWrite(C0_, LOW);
+  // digitalWrite(C1_, HIGH);
   // digitalWrite(enA_, HIGH);
   // digitalWrite(enB_, HIGH);
   // digitalWrite(enC_, HIGH);
 
-  for (int dutyCycle = 150; dutyCycle <= 255; dutyCycle++) {
-    // Set PWM duty cycle
-    // motorA.setSpeed(dutyCycle);
-    // motorB.setSpeed(dutyCycle);
-    // motorC.setSpeed(dutyCycle);
-    ledcWrite(0, dutyCycle);
-    ledcWrite(3, dutyCycle);
-    ledcWrite(7, dutyCycle);
-    delay(100); // Wait for a short duration for gradual change
-  }
+  //void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3)
+  float v1=0, v2=0, v3=0;
   
-  // Decrease brightness gradually
-  for (int dutyCycle = 255; dutyCycle >= 150; dutyCycle--) {
-    // Set PWM duty cycle
-    // motorA.setSpeed(dutyCycle);
-    // motorB.setSpeed(dutyCycle);
-    // motorC.setSpeed(dutyCycle);
-    ledcWrite(0, dutyCycle);
-    ledcWrite(3, dutyCycle);
-    ledcWrite(7, dutyCycle);
-    delay(100); // Wait for a short duration for gradual change
-  }
+  invKin(254,0,&v1,&v2,&v3);
+
+  // Serial.print(abs(v1));
+  // Serial.print(" ");
+  // Serial.print(abs(v2));
+  // Serial.print(" ");
+  // Serial.println(abs(v3));
+
+  ledcWrite(0, abs(v1));
+  ledcWrite(3, abs(v2));
+  ledcWrite(7, abs(v3));
+  motorA.setSpeed(v1);
+  motorA.setSpeed(v2);
+  motorA.setSpeed(v3);
+
+  Serial.print(v1);
+  Serial.print(" ");
+  Serial.print(v2);
+  Serial.print(" ");
+  Serial.println(v3);
+
+  digitalWrite(A0_, LOW);
+  digitalWrite(A1_, HIGH);
+  digitalWrite(B0_, HIGH);
+  digitalWrite(B1_, LOW);
+  digitalWrite(C0_, LOW);
+  digitalWrite(C1_, HIGH);
+  delay(2000);
+
+  invKin(0,0,&v1,&v2,&v3);
+  Serial.print(v1);
+  Serial.print(" ");
+  Serial.print(v2);
+  Serial.print(" ");
+  Serial.println(v3);
+  ledcWrite(0, abs(v1));
+  ledcWrite(3, abs(v2));
+  ledcWrite(7, abs(v3));
+  // motorA.setSpeed(v1);
+  // motorA.setSpeed(v2);
+  // motorA.setSpeed(v3);
+  delay(2000);
+  digitalWrite(A0_, HIGH);
+  digitalWrite(A1_, LOW);
+  digitalWrite(B0_, LOW);
+  digitalWrite(B1_, HIGH);
+  digitalWrite(C0_, HIGH);
+  digitalWrite(C1_, LOW);
+
+  delay(2000);
+  // for (int dutyCycle = 150; dutyCycle <= 255; dutyCycle++) {
+  //   // Set PWM duty cycle
+  //   // motorA.setSpeed(dutyCycle);
+  //   // motorB.setSpeed(dutyCycle);
+  //   // motorC.setSpeed(dutyCycle);
+  //   ledcWrite(0, dutyCycle);
+  //   ledcWrite(3, dutyCycle);
+  //   ledcWrite(7, dutyCycle);
+  //   delay(100); // Wait for a short duration for gradual change
+  // }
+  
+  // // Decrease brightness gradually
+  // for (int dutyCycle = 255; dutyCycle >= 150; dutyCycle--) {
+  //   // Set PWM duty cycle
+  //   // motorA.setSpeed(dutyCycle);
+  //   // motorB.setSpeed(dutyCycle);
+  //   // motorC.setSpeed(dutyCycle);
+  //   ledcWrite(0, dutyCycle);
+  //   ledcWrite(3, dutyCycle);
+  //   ledcWrite(7, dutyCycle);
+  //   delay(100); // Wait for a short duration for gradual change
+  // }
+
+
 
 
     //getData();
@@ -289,3 +345,23 @@ void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3)
     *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
     *v3 = speedY;
 }
+
+
+
+void motor::setSpeed(float speed){
+      if(speed == 0){
+        brake();
+      }else if (speed > 0){
+        //move forward
+        pinMode(P0, OUTPUT);
+        pinMode(P1, OUTPUT);
+        digitalWrite(P0, HIGH);
+        digitalWrite(P1, LOW);
+      }else if (speed < 0){
+        //move forward
+        pinMode(P0, OUTPUT);
+        pinMode(P1, OUTPUT);
+        digitalWrite(P0, LOW);
+        digitalWrite(P1, HIGH);
+      }
+    }

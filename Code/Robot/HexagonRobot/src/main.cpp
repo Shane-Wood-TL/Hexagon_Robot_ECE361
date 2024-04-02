@@ -164,56 +164,112 @@ void loop() {
   //void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3)
   float v1=0, v2=0, v3=0;
   
-  invKin(254,0,&v1,&v2,&v3);
+  //working f/w
+  // invKin(254,0,&v1,&v2,&v3);
 
-  // Serial.print(abs(v1));
-  // Serial.print(" ");
-  // Serial.print(abs(v2));
-  // Serial.print(" ");
-  // Serial.println(abs(v3));
+  // // Serial.print(abs(v1));
+  // // Serial.print(" ");
+  // // Serial.print(abs(v2));
+  // // Serial.print(" ");
+  // // Serial.println(abs(v3));
 
-  ledcWrite(0, abs(v1));
-  ledcWrite(3, abs(v2));
-  ledcWrite(7, abs(v3));
-  motorA.setSpeed(v1);
-  motorA.setSpeed(v2);
-  motorA.setSpeed(v3);
-
-  Serial.print(v1);
-  Serial.print(" ");
-  Serial.print(v2);
-  Serial.print(" ");
-  Serial.println(v3);
-
-  digitalWrite(A0_, LOW);
-  digitalWrite(A1_, HIGH);
-  digitalWrite(B0_, HIGH);
-  digitalWrite(B1_, LOW);
-  digitalWrite(C0_, LOW);
-  digitalWrite(C1_, HIGH);
-  delay(2000);
-
-  invKin(0,0,&v1,&v2,&v3);
-  Serial.print(v1);
-  Serial.print(" ");
-  Serial.print(v2);
-  Serial.print(" ");
-  Serial.println(v3);
-  ledcWrite(0, abs(v1));
-  ledcWrite(3, abs(v2));
-  ledcWrite(7, abs(v3));
+  // ledcWrite(0, abs(v1));
+  // ledcWrite(3, abs(v2));
+  // ledcWrite(7, abs(v3));
   // motorA.setSpeed(v1);
   // motorA.setSpeed(v2);
   // motorA.setSpeed(v3);
-  delay(2000);
+
+  // Serial.print(v1);
+  // Serial.print(" ");
+  // Serial.print(v2);
+  // Serial.print(" ");
+  // Serial.println(v3);
+
+  // digitalWrite(A0_, LOW);
+  // digitalWrite(A1_, HIGH);
+  // digitalWrite(B0_, HIGH);
+  // digitalWrite(B1_, LOW);
+  // digitalWrite(C0_, LOW);
+  // digitalWrite(C1_, HIGH);
+  // delay(2000);
+
+// invKin(-254,0,&v1,&v2,&v3);
+
+//   // Serial.print(abs(v1));
+//   // Serial.print(" ");
+//   // Serial.print(abs(v2));
+//   // Serial.print(" ");
+//   // Serial.println(abs(v3));
+
+//   ledcWrite(0, abs(v1));
+//   ledcWrite(3, abs(v2));
+//   ledcWrite(7, abs(v3));
+//   motorA.setSpeed(v1);
+//   motorA.setSpeed(v2);
+//   motorA.setSpeed(v3);
+
+//   Serial.print(v1);
+//   Serial.print(" ");
+//   Serial.print(v2);
+//   Serial.print(" ");
+//   Serial.println(v3);
+
+//   digitalWrite(A0_, HIGH);
+//   digitalWrite(A1_, LOW);
+//   digitalWrite(B0_, LOW);
+//   digitalWrite(B1_, HIGH);
+//   digitalWrite(C0_, HIGH);
+//   digitalWrite(C1_, LOW);
+//   delay(2000);
+
+
+
+
+
+
+
+
+
+
+  invKin(0,254,&v1,&v2,&v3);
+  Serial.print(v1);
+  Serial.print(" ");
+  Serial.print(v2);
+  Serial.print(" ");
+  Serial.println(v3);
+  ledcWrite(0, abs(255));
+  ledcWrite(3, abs(255));
+  ledcWrite(7, abs(255));
+  delay(50);
+  ledcWrite(0, abs(v1)+10);
+  ledcWrite(3, abs(v2)+10);
+  ledcWrite(7, abs(v3));
+
+  
   digitalWrite(A0_, HIGH);
   digitalWrite(A1_, LOW);
   digitalWrite(B0_, LOW);
   digitalWrite(B1_, HIGH);
   digitalWrite(C0_, HIGH);
   digitalWrite(C1_, LOW);
-
   delay(2000);
+
+
+  
+
+  // invKin(0,-254,&v1,&v2,&v3);
+  // ledcWrite(0, abs(v1));
+  // ledcWrite(3, abs(v2));
+  // ledcWrite(7, abs(v3));
+  // digitalWrite(A0_, LOW);
+  // digitalWrite(A1_, HIGH);
+  // digitalWrite(B0_, HIGH);
+  // digitalWrite(B1_, LOW);
+  // digitalWrite(C0_, LOW);
+  // digitalWrite(C1_, HIGH);
+
+  // delay(2000);
   // for (int dutyCycle = 150; dutyCycle <= 255; dutyCycle++) {
   //   // Set PWM duty cycle
   //   // motorA.setSpeed(dutyCycle);
@@ -339,7 +395,7 @@ void getData(){
 }
 
 //sets the motor speeds and direction
-void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3)
+void invKin(int speedX, int speedY, float* v1, float* v2, float* v3)
 {
     *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
     *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);

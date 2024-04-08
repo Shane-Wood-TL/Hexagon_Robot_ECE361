@@ -455,13 +455,13 @@ void invKin(int speedX, int speedY, int spin, float* v1, float* v2, float* v3)
 {
 
   //Shane new math
-    double PHI = atan2(speedY,speedX);
+    float PHI = atan2(speedY,speedX);
 
-    double thetaC = (3.14/2) - PHI;
-    double thetaB = (3*3.14/2) - PHI;
-    double thetaA = (3*3.14/2) + PHI;
+    float thetaC = (3.14/2) - PHI;
+    float thetaB = (7*3.14/6) - PHI;
+    float thetaA = (11*3.14/6) - PHI;
 
-    double FullSpeed = sqrt((speedX^2 + speedY^2))
+    float FullSpeed = sqrt(((speedX * speedX) + (speedY * speedY)));
 
     *v3 = FullSpeed * sin(thetaC);
     *v2 = FullSpeed * sin(thetaB);

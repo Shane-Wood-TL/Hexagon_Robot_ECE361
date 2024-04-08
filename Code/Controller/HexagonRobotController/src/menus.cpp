@@ -26,11 +26,30 @@ void updateMenu(int state, PayloadStruct payload){
   lcd.clear();
   //second row text
   if(payload.eStop == true){
-    lcd.setCursor(1,1);
+    lcd.setCursor(0,1);
       lcd.print("STOP");
   }else{
-      lcd.setCursor(1,1);
+      lcd.setCursor(0,1);
       lcd.print("   ");
+  }
+
+  if(payload.PID == true){
+    lcd.setCursor(5,1);
+      lcd.print("PID");
+  }else{
+      lcd.setCursor(5,1);
+      lcd.print("   ");
+  }
+
+  if(payload.disable == 0){
+    lcd.setCursor(9,1);
+      lcd.print("     ");
+  }else if (payload.disable == 1){
+      lcd.setCursor(9,1);
+      lcd.print("nospin");
+  }else if (payload.disable == 2){
+      lcd.setCursor(9,1);
+      lcd.print("nomove");
   }
   //top row text
   lcd.setCursor(0,0);

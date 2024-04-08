@@ -30,12 +30,12 @@
 #define S8 36
 #define S9 35
 
-#define X0 15
-#define Y0 16
+#define Y0 15
+#define X0 16
 #define J0 17
 
-#define X1 18
-#define Y1 8
+#define Y1 18
+#define X1 8
 #define J1 9
 
 #define maxStates 3
@@ -49,7 +49,9 @@ struct PayloadStruct {
   uint8_t speedX; //a int centered at 127
   uint8_t speedY; //a int centered at 127
   uint8_t spin;   //a int centered at 127
-  uint8_t eStop;  // bascially a bool
+  bool eStop;  // bascially a bool
+  bool PID;
+  uint8_t disable;
 };
 
 struct inputValues{

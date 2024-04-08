@@ -80,59 +80,120 @@ void loop() {
 
   //some basic fixed inputs
   //confirmed additions
-  //SW0(0,1) Estop / nothing / nothing
-  //SW1(2,3) Mode switcher  / nothing / nothing
+  //sw4 is the on the left 
+  //SW4(8,9) Estop / nothing / nothing
+  //SW3(6,7) Mode switcher  / nothing / nothing
 
   //maybe additions
-  //SW2(4,5) PID (for line following mode) / nothing / PID (for wall following mode)
-  //SW3(6,7) disable spin / nothing / disable move
-  //SW4(8,9) nothing / nothing / nothing
+  //SW2(4,5) PID (for line following mode)(for wall following mode) / nothing / nothing 
+  //SW1(3,2) disable spin / nothing / disable move
+  //SW0(0,1) nothing / nothing / nothing
+
+
 
   //switches are active low eg flipped = 0
 
 
   //code to handle estop switch + prevent extra display refreshes
   //only go to display when value has changed
-  if(readingValues.S0V != 1){
-    if(payload.eStop != 1){
-      payload.eStop = 1;
+  if(readingValues.S8V != 1){
+    if(payload.eStop != true){
+      payload.eStop = true;
       updateMenu(state, payload);
     }
   }else{
-    if(payload.eStop != 0){
-      payload.eStop = 0;
+    if(payload.eStop != false){
+      payload.eStop = false;
       updateMenu(state, payload);
     }
   }
 
+  //PID
+  if(readingValues.S4V != 1){
+    if(payload.PID != true){
+      payload.PID = true;
+      updateMenu(state, payload);
+    }
+  }else{
+    if(payload.PID != false){
+      payload.PID = false;
+      updateMenu(state, payload);
+    }
+  }
+
+  //3 and 2 (disable spin, disable move)
+  // no disable = 0
+  // spin disable = 1
+  // move disable = 2
+  if(readingValues.S2V != 1){
+    //spin disable
+    if(payload.disable != 1){
+      payload.disable = 1;
+      updateMenu(state, payload);
+    }
+  }else if(readingValues.S3V != 1){
+    //move disable
+    if(payload.disable != 2){
+      payload.disable = 2;
+      updateMenu(state, payload);
+    }
+  }else{
+    if(payload.disable != 0){
+      payload.disable = 0;
+      updateMenu(state, payload);
+    }
+  }
+  
+
+
   //once mode switching is done switch modes
-  if (state != oldState && readingValues.S2V == 1){
+  if (state != oldState && readingValues.S6V == 1){
     oldState = state;
     payload.mode = oldState;    
   }
 
   //menu interface to switch modes
-  if(readingValues.S2V != 1){
+  if(readingValues.S6V != 1){
     float menuJ = map(readingValues.J0YV, 0,4096,-80,80);
     int temp_state = state;
+
       if(menuJ >=75){
         state = decState(state);
-        delay(100);
+        delay(200);
       }else if(menuJ <= -75){
         state = incState(state);
-        delay(100);
+        delay(200);
       }
       if(temp_state!=state){
         updateMenu(state, payload);
       }
+    
   }
 
 
 
+
   //the rest of the values to be sent through payload can be set here like
-  payload.speedX = int(map(readingValues.J0XV, 0, 4096, 0,255));
-  payload.speedY = int(map(readingValues.J0YV, 0, 4096, 0,255));
-  payload.spin = int(map(readingValues.J1YV, 0, 4096, 0,255));
+  
+  //joystick mapping + zeroing
+  payload.speedX = constrain(int(map(readingValues.J0XV, 0, 4096, 255,0)-3), 0, 255);
+  payload.speedY = constrain(int(map(readingValues.J0YV, 0, 4096, 255,0)+2), 0, 255);
+
+  
+  //JOXV = 4095 2119 1
+  //JOYV = 4095 1981 7
+  //J1XV = 4095 2025 3
+  //J1YV = 4095 3345 340
+  //this joystick is very trash, very bad, non linear
+  int j1x = 127;
+  if (readingValues.J1XV >= 3300){
+    j1x = constrain(int(map(readingValues.J1XV, 3300, 4096, 127,0)), 0, 255);
+  }else{
+    j1x = constrain(int(map(readingValues.J1XV, 3329, 340, 127,255)), 0, 255);
+  }
+  
+;
+
 
 
   sent = radio.write(&payload, sizeof(PayloadStruct)); //actually send values

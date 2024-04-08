@@ -251,11 +251,15 @@ void loop() {
   // ledcWrite(0, 150);
   // ledcWrite(3, 210);
   // ledcWrite(7, 255);
-  ledcWrite(0,abs(v1)+35); //A
-  ledcWrite(3,abs(v2)+35); //B
-  ledcWrite(7,abs(v3)); //C
 
-   
+  //Previous values with smaller wheels
+  // ledcWrite(0,abs(v1)+35); //A
+  // ledcWrite(3,abs(v2)+35); //B
+  // ledcWrite(7,abs(v3)); //C
+
+  ledcWrite(0,abs(v1)); //A
+  ledcWrite(3,abs(v2)); //B
+  ledcWrite(7,abs(v3)); //C 
 
   Serial.print(f1);
   Serial.print(" ");
@@ -263,12 +267,48 @@ void loop() {
   Serial.print(" ");
   Serial.println(f3);
   
-  digitalWrite(A0_, LOW);
-  digitalWrite(A1_, HIGH);
-  digitalWrite(B0_, LOW); 
-  digitalWrite(B1_, HIGH);
-  digitalWrite(C0_, HIGH);
-  digitalWrite(C1_, LOW);
+  //Static direction control
+  // digitalWrite(A0_, LOW);
+  // digitalWrite(A1_, HIGH);
+  // digitalWrite(B0_, LOW); 
+  // digitalWrite(B1_, HIGH);
+  // digitalWrite(C0_, HIGH);
+  // digitalWrite(C1_, LOW);
+
+  //Dynamic direction control
+  if(v1 >= 0) //A
+    {
+      digitalWrite(A0_, HIGH);
+      digitalWrite(A1_, LOW);
+    }
+    else if(v1 < 0)
+    {
+      digitalWrite(A0_, LOW);
+      digitalWrite(A1_, HIGH);
+    }
+
+    if(v2 >= 0) //B
+    {
+      digitalWrite(B0_, HIGH);
+      digitalWrite(B1_, LOW);
+    }
+    else if(v2 < 0)
+    {
+      digitalWrite(B0_, LOW);
+      digitalWrite(B1_, HIGH);
+    }
+
+    if(v3 >= 0) //C
+    {
+      digitalWrite(C0_, HIGH);
+      digitalWrite(C1_, LOW);
+    }
+    else if(v3 < 0)
+    {
+      digitalWrite(C0_, LOW);
+      digitalWrite(C1_, HIGH);
+    }
+
   delay(2000);
 
 
@@ -413,17 +453,36 @@ void getData(){
 //sets the motor speeds and direction
 void invKin(int speedX, int speedY, int spin, float* v1, float* v2, float* v3)
 {
+
+  //Shane new math
+    double PHI = atan2(speedY,speedX);
+
+    double thetaC = (3.14/2) - PHI;
+    double thetaB = (3*3.14/2) - PHI;
+    double thetaA = (3*3.14/2) + PHI;
+
+    double FullSpeed = sqrt((speedX^2 + speedY^2))
+
+    *v3 = FullSpeed * sin(thetaC);
+    *v2 = FullSpeed * sin(thetaB);
+    *v1 = FullSpeed * sin(thetaA);
+
+    //Somewhat working code
+
+    //Version with exact value.
     /* *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
      *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
      *v3 = speedY;*/
+    
+    //Version with rounded value.
+    /*
+    *v1 = (-0.8660254 * speedX) - (0.5 * speedY); //A
+     *v2 = (0.8660254 * speedX) - (0.5 * speedY);//B
+     *v3 = speedY; //C*/
 
-     *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
-     *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
-     *v3 = speedY;
+    
 
-    // *v1 = speedX - (speedY *0.66) - spin;
-    // *v2 = speedX + (speedY *0.66) + spin;
-    // *v3 = speedY - spin;
+   
 
   
 

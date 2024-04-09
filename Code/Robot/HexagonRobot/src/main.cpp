@@ -20,6 +20,10 @@
 #include <constants.h>
 
 
+//#define Printing
+
+
+
 float motorFreq = 500; 
 float minOnTime = 790;
 float maxOnTime = 2000;
@@ -34,11 +38,13 @@ void getData();
 
 
 struct PayloadStruct {
-  uint8_t mode; //sw2
-  uint8_t speedX;
-  uint8_t speedY;
-  uint8_t spin;
-  bool eStop;
+  uint8_t mode;   //simple mode, basic int
+  float speed; 
+  float angle;
+  uint8_t spin;   //a int centered at 127
+  bool eStop;  // bascially a bool
+  bool PID;
+  uint8_t disable;
 };
 
 
@@ -49,14 +55,14 @@ PayloadStruct payload;
 RF24 radio(CE,SCN);
 bool newData = false;
 int oldState = 0;
-const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
+const byte thisSlaveAddress[5] = {'T','r','i','n','E'};
 
 
 // //temperature sensor
 Adafruit_BMP085 bmp;
 
 // //display
-LiquidCrystal_I2C lcd(0x27,20,4);
+LiquidCrystal_I2C lcd(0x3F,16,2);
 
 
 //motor class instances
@@ -87,10 +93,11 @@ void setup() {
 
   //i2c setup
   Wire.begin(SDA,SCL); //SDA, SCL
-  // lcd.init();           
-  // lcd.backlight();
-  // lcd.clear();
-  // lcd.print("working");
+  lcd.init();           
+  lcd.backlight();
+  lcd.clear();
+  lcd.print("working");
+  bmp.begin();
 
 
   //begin SPI
@@ -148,6 +155,9 @@ void setup() {
 }
 
 void loop() {
+  getData();
+  //code to test sensors
+  #ifdef printing
   Serial.print(digitalRead(L0));
   Serial.print(" ");
   Serial.print(digitalRead(L1));
@@ -162,134 +172,31 @@ void loop() {
   Serial.print(" ");
   Serial.print(Dis4.getDistance());
   Serial.print(" ");
-  Serial.println(Dis5.getDistance());
-
-
-  // digitalWrite(A0_, LOW);
-  // digitalWrite(A1_, HIGH);
-  // digitalWrite(B0_, HIGH);
-  // digitalWrite(B1_, LOW);
-  // digitalWrite(C0_, LOW);
-  // digitalWrite(C1_, HIGH);
-  // digitalWrite(enA_, HIGH);
-  // digitalWrite(enB_, HIGH);
-  // digitalWrite(enC_, HIGH);
-
-  //void invKin(uint8_t speedX, uint8_t speedY, float* v1, float* v2, float* v3)
-  float v1=0, v2=0, v3=0;
-  
-  //working f/w
-  // invKin(254,0,&v1,&v2,&v3);
-
-  // // Serial.print(abs(v1));
-  // // Serial.print(" ");
-  // // Serial.print(abs(v2));
-  // // Serial.print(" ");
-  // // Serial.println(abs(v3));
-
-  // ledcWrite(0, abs(v1));
-  // ledcWrite(3, abs(v2));
-  // ledcWrite(7, abs(v3));
-  // motorA.setSpeed(v1);
-  // motorA.setSpeed(v2);
-  // motorA.setSpeed(v3);
-
-  // Serial.print(v1);
-  // Serial.print(" ");
-  // Serial.print(v2);
-  // Serial.print(" ");
-  // Serial.println(v3);
-
-  // digitalWrite(A0_, LOW);
-  // digitalWrite(A1_, HIGH);
-  // digitalWrite(B0_, HIGH);
-  // digitalWrite(B1_, LOW);
-  // digitalWrite(C0_, LOW);
-  // digitalWrite(C1_, HIGH);
-  // delay(2000);
-
-// invKin(-254,0,&v1,&v2,&v3);
-
-//   // Serial.print(abs(v1));
-//   // Serial.print(" ");
-//   // Serial.print(abs(v2));
-//   // Serial.print(" ");
-//   // Serial.println(abs(v3));
-
-//   ledcWrite(0, abs(v1));
-//   ledcWrite(3, abs(v2));
-//   ledcWrite(7, abs(v3));
-//   motorA.setSpeed(v1);
-//   motorA.setSpeed(v2);
-//   motorA.setSpeed(v3);
-
-//   Serial.print(v1);
-//   Serial.print(" ");
-//   Serial.print(v2);
-//   Serial.print(" ");
-//   Serial.println(v3);
-
-//   digitalWrite(A0_, HIGH);
-//   digitalWrite(A1_, LOW);
-//   digitalWrite(B0_, LOW);
-//   digitalWrite(B1_, HIGH);
-//   digitalWrite(C0_, HIGH);
-//   digitalWrite(C1_, LOW);
-//   delay(2000);
+  Serial.print(Dis5.getDistance());
+  Serial.print(" ");
+  Serial.print(bmp.readTemperature());
+  Serial.print(" ");
+  Serial.print(payload.mode);
+  Serial.print(" ");
+  Serial.print(payload.speed);
+  Serial.print(" ");
+  Serial.print(payload.angle);
+  Serial.print(" ");
+  Serial.print(payload.spin);
+  // Serial.println(payload.eStop);
+  // float v1=0, v2=0, v3=0;
+  Serial.println();
+  #endif
 
 
 
-
-
-
-
-
-
-
-  invKin(0,255,0,&v1,&v2,&v3);
-  // Serial.print(v1);
-  // Serial.print(" ");
-  // Serial.print(v2);
-  // Serial.print(" ");
-  // Serial.println(v3);
-  ledcWrite(0, abs(255));
-  ledcWrite(3, abs(255));
-  ledcWrite(7, abs(255));
-  delay(5);
-  
-  float f1, f2, f3;
-  //f1 = map(abs(v1), 0, 255, 150, 255);
-  //f2 = map(abs(v2), 0, 255, 150, 255);
-  //f3 = map(abs(v3), 0, 255, 150, 255);
-
-  // ledcWrite(0, 150);
-  // ledcWrite(3, 210);
-  // ledcWrite(7, 255);
-
-  //Previous values with smaller wheels
-  // ledcWrite(0,abs(v1)+35); //A
-  // ledcWrite(3,abs(v2)+35); //B
-  // ledcWrite(7,abs(v3)); //C
-
+  //Dynamic direction control
+  invKin(payload.speed, payload.angle, payload.spin, &v1, &v2, &v3);
   ledcWrite(0,abs(v1)); //A
   ledcWrite(3,abs(v2)); //B
   ledcWrite(7,abs(v3)); //C 
 
-  // Serial.print(f1);
-  // Serial.print(" ");
-  // Serial.print(f2);
-  // Serial.print(" ");
-  // Serial.println(f3);
-  
-  //Static direction control
-  // digitalWrite(A0_, LOW);
-  // digitalWrite(A1_, HIGH);
-  // digitalWrite(B0_, LOW); 
-  // digitalWrite(B1_, HIGH);
-  // digitalWrite(C0_, HIGH);
-  // digitalWrite(C1_, LOW);
 
-  //Dynamic direction control
   if(v1 >= 0) //A
     {
       digitalWrite(A0_, HIGH);
@@ -321,63 +228,96 @@ void loop() {
     {
       digitalWrite(C0_, LOW);
       digitalWrite(C1_, HIGH);
+    }   
+  
+}
+
+
+//gets data from radio, checks if data was recieved
+void getData(){
+   if (radio.available()) {
+    radio.read(&payload, sizeof(payload));
+    newData = true;
+  }
+}
+
+//sets the motor speeds and direction
+void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
+{
+  float spinMod = map(spin, 0,255, -127,127);
+  float v1T = speed*sin(decrad(330-angle));
+  float v2T = speed*sin(decrad(210-angle));
+  float v3T = speed*sin(decrad(90-angle));
+  *v1 = v1T+spinMod;
+  *v2 = v2T+spinMod;
+  *v3 = v3T+spinMod;
+}
+
+
+
+void motor::setSpeed(float speed){
+      if(speed == 0){
+        brake();
+      }else if (speed > 0){
+        //move forward
+        pinMode(P0, OUTPUT);
+        pinMode(P1, OUTPUT);
+        digitalWrite(P0, HIGH);
+        digitalWrite(P1, LOW);
+      }else if (speed < 0){
+        //move forward
+        pinMode(P0, OUTPUT);
+        pinMode(P1, OUTPUT);
+        digitalWrite(P0, LOW);
+        digitalWrite(P1, HIGH);
+      }
     }
 
-  delay(2000);
-
-
-  
-
-  // invKin(0,-254,&v1,&v2,&v3);
-  // ledcWrite(0, abs(v1));
-  // ledcWrite(3, abs(v2));
-  // ledcWrite(7, abs(v3));
-  // digitalWrite(A0_, LOW);
-  // digitalWrite(A1_, HIGH);
-  // digitalWrite(B0_, HIGH);
-  // digitalWrite(B1_, LOW);
-  // digitalWrite(C0_, LOW);
-  // digitalWrite(C1_, HIGH);
-
-  // delay(2000);
-  // for (int dutyCycle = 150; dutyCycle <= 255; dutyCycle++) {
-  //   // Set PWM duty cycle
-  //   // motorA.setSpeed(dutyCycle);
-  //   // motorB.setSpeed(dutyCycle);
-  //   // motorC.setSpeed(dutyCycle);
-  //   ledcWrite(0, dutyCycle);
-  //   ledcWrite(3, dutyCycle);
-  //   ledcWrite(7, dutyCycle);
-  //   delay(100); // Wait for a short duration for gradual change
-  // }
-  
-  // // Decrease brightness gradually
-  // for (int dutyCycle = 255; dutyCycle >= 150; dutyCycle--) {
-  //   // Set PWM duty cycle
-  //   // motorA.setSpeed(dutyCycle);
-  //   // motorB.setSpeed(dutyCycle);
-  //   // motorC.setSpeed(dutyCycle);
-  //   ledcWrite(0, dutyCycle);
-  //   ledcWrite(3, dutyCycle);
-  //   ledcWrite(7, dutyCycle);
-  //   delay(100); // Wait for a short duration for gradual change
-  // }
 
 
 
 
-    //getData();
-  // motorA.setSpeed(100);
-  // for (int i = 0; i <= 255; i++) {
-  //   // Print the current value of i
-  //   motorA.setSpeed(i);
-  //   delay(100); // Delay for readability, adjust as needed
-  // }
 
-  /*
-  payload.mode = 0;
-  payload.speedX = 100;
-  payload.speedY = 100;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
   if (payload.eStop == true){
     motorA.brake();
     //motorB.brake();
@@ -451,73 +391,3 @@ void loop() {
     }
   }
   */
-}
-
-
-//gets data from radio, checks if data was recieved
-void getData(){
-  //  if (radio.available()) {
-  //   radio.read(&payload, sizeof(payload));
-  //   newData = true;
-  // //  }else{
-  // //   payload.eStop ==true; 
-  // }
-}
-
-//sets the motor speeds and direction
-void invKin(int speedX, int speedY, int spin, float* v1, float* v2, float* v3)
-{
-
-  //Shane new math
-    float PHI = atan2(speedY,speedX);
-
-    float thetaC = (3.14/2) - PHI;
-    float thetaB = (7*3.14/6) - PHI;
-    float thetaA = (11*3.14/6) - PHI;
-
-    float FullSpeed = sqrt(((speedX * speedX) + (speedY * speedY)));
-
-    *v3 = FullSpeed * sin(thetaC);
-    *v2 = FullSpeed * sin(thetaB);
-    *v1 = FullSpeed * sin(thetaA);
-
-    //Somewhat working code
-
-    //Version with exact value.
-    /* *v1 = ((-sqrt(3)/2) * speedX) - (0.5 * speedY);
-     *v2 = ((sqrt(3)/2) * speedX) - (0.5 * speedY);
-     *v3 = speedY;*/
-    
-    //Version with rounded value.
-    /*
-    *v1 = (-0.8660254 * speedX) - (0.5 * speedY); //A
-     *v2 = (0.8660254 * speedX) - (0.5 * speedY);//B
-     *v3 = speedY; //C*/
-
-    
-
-   
-
-  
-
-}
-
-
-
-void motor::setSpeed(float speed){
-      if(speed == 0){
-        brake();
-      }else if (speed > 0){
-        //move forward
-        pinMode(P0, OUTPUT);
-        pinMode(P1, OUTPUT);
-        digitalWrite(P0, HIGH);
-        digitalWrite(P1, LOW);
-      }else if (speed < 0){
-        //move forward
-        pinMode(P0, OUTPUT);
-        pinMode(P1, OUTPUT);
-        digitalWrite(P0, LOW);
-        digitalWrite(P1, HIGH);
-      }
-    }

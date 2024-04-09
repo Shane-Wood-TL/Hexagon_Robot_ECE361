@@ -1,11 +1,12 @@
 #include <constants.h>
 
 
+
 //radio variables
 PayloadStruct payload;
 RF24 radio(CE,SCN);
 bool newData = false;
-const byte slaveAddress[5] = {'R','x','A','A','A'};
+const byte slaveAddress[5]  = {'T','r','i','n','E'};
 
 
 //display object
@@ -47,7 +48,7 @@ void setup() {
   //set radio speed, and wireless address
   radio.setDataRate( RF24_250KBPS );
   radio.setRetries(3,5); // delay, count
-  radio.setPALevel(RF24_PA_MAX);
+  radio.setPALevel(RF24_PA_MIN);
   radio.openWritingPipe(slaveAddress);
 
   //display that radio working
@@ -176,10 +177,23 @@ void loop() {
   //the rest of the values to be sent through payload can be set here like
   
   //joystick mapping + zeroing
-  payload.speedX = constrain(int(map(readingValues.J0XV, 0, 4096, 255,0)-3), 0, 255);
-  payload.speedY = constrain(int(map(readingValues.J0YV, 0, 4096, 255,0)+2), 0, 255);
-
-  
+  float adjustedX = constrain((map(readingValues.J0XV, 0, 4096, 255,-255)-6), -255, 255);
+  float adjustedY = constrain((map(readingValues.J0YV, 0, 4096, 255,-255)+4), -255, 255);
+  float speed = sqrt(pow(adjustedX,2)+ pow(adjustedY,2));
+  float angle = atan2(adjustedY, adjustedX);
+  // Serial.print(adjustedX);
+  // Serial.print("  ");
+  // Serial.print(adjustedY);
+  // Serial.print("  ");
+  // Serial.print(speed);
+  // Serial.print("  ");
+  angle = angle * (180.0/3.14);
+  if (angle < 0){
+    angle +=360;
+  }
+  payload.angle = angle;
+  payload.speed= speed;
+  //Serial.println(angle);
   //JOXV = 4095 2119 1
   //JOYV = 4095 1981 7
   //J1XV = 4095 2025 3
@@ -191,6 +205,7 @@ void loop() {
   }else{
     j1x = constrain(int(map(readingValues.J1XV, 3329, 340, 127,255)), 0, 255);
   }
+  payload.spin = j1x;
   
 ;
 

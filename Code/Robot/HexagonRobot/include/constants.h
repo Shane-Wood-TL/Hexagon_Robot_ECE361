@@ -161,4 +161,21 @@ class distances{
 };
 
 
-void invKin(int speedX, int speedY, int spin, float* v1, float* v2, float* v3);
+void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3);
+
+
+
+//converts radians to degrees
+float raddec(float rad)
+{
+  rad = rad * (180 / PI);
+  return rad;
+}
+
+
+//converts degrees to radians
+float decrad(float deg)
+{
+  deg = deg * (PI / 180);
+  return deg;
+}

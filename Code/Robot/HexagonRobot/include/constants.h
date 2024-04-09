@@ -1,5 +1,5 @@
 #include <Arduino.h>
-
+#include <NewPing.h>
 
 #define SDA 4
 #define SCL 5
@@ -62,32 +62,22 @@ class motor{
 
 
 
-
 class DistanceSensor{
   private:
-    int Dpin;
+    NewPing sonar;
     float speedOfSound;
   public:
-    DistanceSensor(int pinV, float speed){
-      Dpin = pinV;
-      speedOfSound = speed;
+    DistanceSensor(int pinV, float speed) : sonar(pinV, pinV, 400), speedOfSound(speed) {
     }
 
     
     float getDistance(){
-      //send a pulse out
-      pinMode(Dpin, OUTPUT);
-      digitalWrite(Dpin, LOW);
-      delayMicroseconds(2);
-      digitalWrite(Dpin, HIGH);
-      delayMicroseconds(10);
-      digitalWrite(Dpin, LOW);
+      float soundsp = 331.4 + (0.606 * 22);
+      float soundcm = soundsp / 10000;
+      float duration = sonar.ping_median(5);
+      float distance = (duration / 2) * soundcm;
 
-      //check for pulse input (switch pin modes)
-      pinMode(Dpin, INPUT);
-      float lenght = pulseIn(Dpin, HIGH);
-
-      return lenght * speedOfSound; 
+      return distance;
     }
 
 
@@ -95,6 +85,7 @@ class DistanceSensor{
       speedOfSound = speed;
     }
 };
+
 
 
 

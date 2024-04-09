@@ -45,18 +45,18 @@ struct PayloadStruct {
 
 
 // //radio
-// PayloadStruct payload;
-// RF24 radio(CE,SCN);
-// bool newData = false;
-// int oldState = 0;
-// const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
+PayloadStruct payload;
+RF24 radio(CE,SCN);
+bool newData = false;
+int oldState = 0;
+const byte thisSlaveAddress[5] = {'R','x','A','A','A'};
 
 
 // //temperature sensor
-// Adafruit_BMP085 bmp;
+Adafruit_BMP085 bmp;
 
 // //display
-// LiquidCrystal_I2C lcd(0x27,20,4);
+LiquidCrystal_I2C lcd(0x27,20,4);
 
 
 //motor class instances
@@ -65,7 +65,7 @@ motor motorB(B0_, B1_, enB_, 1); //Mtr2
 motor motorC(C0_, C1_, enC_, 0); //Mtr3
 
 
-/*
+
 //distance sensor instances
 DistanceSensor Dis0(D0,intialSpeedOfSound);
 DistanceSensor Dis1(D1,intialSpeedOfSound);
@@ -75,9 +75,8 @@ DistanceSensor Dis4(D4,intialSpeedOfSound);
 DistanceSensor Dis5(D5,intialSpeedOfSound);
 
 //distance array instance
-distances distanceArray(&Dis0, &Dis1, &Dis2, &Dis3, &Dis4, &Dis5, &bmp);
+//distances distanceArray(&Dis0, &Dis1, &Dis2, &Dis3, &Dis4, &Dis5, &bmp);
 
-*/
 
 
 
@@ -87,7 +86,7 @@ void setup() {
   Serial.begin(115200);
 
   //i2c setup
-  //Wire.begin(SDA,SCL); //SDA, SCL
+  Wire.begin(SDA,SCL); //SDA, SCL
   // lcd.init();           
   // lcd.backlight();
   // lcd.clear();
@@ -95,11 +94,11 @@ void setup() {
 
 
   //begin SPI
-  //SPI.begin(SCK, MISO, MOSI);
+  SPI.begin(SCK, MISO, MOSI);
   
  
   // begin radio
-  /*
+  
   if (!radio.begin()) {
     Serial.println(F("radio hardware is not responding!!"));
     lcd.print("no radio");
@@ -114,7 +113,6 @@ void setup() {
   //line following pins
   pinMode(L0, INPUT);
   pinMode(L1, INPUT);
-  */
 
 
   // ledcSetup(motorA.channel, 1000, 8); // channel 0, 5000 Hz, 8-bit resolution
@@ -150,7 +148,23 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("in loop");
+  Serial.print(digitalRead(L0));
+  Serial.print(" ");
+  Serial.print(digitalRead(L1));
+  Serial.print(" ");
+  Serial.print(Dis0.getDistance());
+  Serial.print(" ");
+  Serial.print(Dis1.getDistance());
+  Serial.print(" ");
+  Serial.print(Dis2.getDistance());
+  Serial.print(" ");
+  Serial.print(Dis3.getDistance());
+  Serial.print(" ");
+  Serial.print(Dis4.getDistance());
+  Serial.print(" ");
+  Serial.println(Dis5.getDistance());
+
+
   // digitalWrite(A0_, LOW);
   // digitalWrite(A1_, HIGH);
   // digitalWrite(B0_, HIGH);
@@ -233,11 +247,11 @@ void loop() {
 
 
   invKin(0,255,0,&v1,&v2,&v3);
-  Serial.print(v1);
-  Serial.print(" ");
-  Serial.print(v2);
-  Serial.print(" ");
-  Serial.println(v3);
+  // Serial.print(v1);
+  // Serial.print(" ");
+  // Serial.print(v2);
+  // Serial.print(" ");
+  // Serial.println(v3);
   ledcWrite(0, abs(255));
   ledcWrite(3, abs(255));
   ledcWrite(7, abs(255));
@@ -261,11 +275,11 @@ void loop() {
   ledcWrite(3,abs(v2)); //B
   ledcWrite(7,abs(v3)); //C 
 
-  Serial.print(f1);
-  Serial.print(" ");
-  Serial.print(f2);
-  Serial.print(" ");
-  Serial.println(f3);
+  // Serial.print(f1);
+  // Serial.print(" ");
+  // Serial.print(f2);
+  // Serial.print(" ");
+  // Serial.println(f3);
   
   //Static direction control
   // digitalWrite(A0_, LOW);

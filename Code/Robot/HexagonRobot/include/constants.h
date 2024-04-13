@@ -230,7 +230,7 @@ class Distances{
 };
 
 void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3);
-
+void lineFollowing(int L1Value, int L0Value);
 
 
 //converts radians to degrees

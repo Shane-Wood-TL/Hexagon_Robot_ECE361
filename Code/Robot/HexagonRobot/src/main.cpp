@@ -197,7 +197,23 @@ void loop() {
         //has no ability to detect intersections (tmk) so it can only follow line paths
         int L0Value = digitalRead(L0); //Right
         int L1Value = digitalRead(L1); //Left
-        lineFollowing(L1Value, L0Value);
+        moveValues LineSenor;
+
+        LineSensor.spin = lineFollowing(L1Value, L0Value);
+        if(LineSensor.spin == 0)
+        {
+          LineSensor.speed = 255;
+          LineSensor.angle = 90;
+        }
+        else
+        {
+          LineSensor.speed = 0;
+          LineSensor.angle = 0;
+        }
+        invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3);
+        motorA.setSpeed(v1);
+        motorB.setSpeed(v2);
+        motorC.setSpeed(v3);
         break;
       }
     }
@@ -230,24 +246,26 @@ void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
 }
 
 
-void lineFollowing(int Left, int Right)
+float lineFollowing(int Left, int Right)
 {
+  int noSpin = 127;
   int CW = 255;
   int CCW = 0;
- 
+  int spin;
+
   if(Left == 0 && Right == 0)
   {
-    invKin(255, 90, 0, &v1, &v2, &v3);
+    return spin = noSpin;
   }
 
   else if(Left == 0 && Right == 1)
   {
-    invKin(0, 0, CW, &v1, &v2, &v3);
+    return spin = CW;
   }
 
   else if(Left == 1 && Right == 0)
   {
-    invKin(0, 0, CCW, &v1, &v2, &v3);
+    return spin = CCW;
   }
 }
 

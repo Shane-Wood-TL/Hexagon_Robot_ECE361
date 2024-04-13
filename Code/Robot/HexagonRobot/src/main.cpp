@@ -195,8 +195,9 @@ void loop() {
       case 2:{ //line following
         //use pid to increase speed and reduce the bouncing from one extreme to the other
         //has no ability to detect intersections (tmk) so it can only follow line paths
-        int L0Value = digitalRead(L0);
-        int L1Value = digitalRead(L1);
+        int L0Value = digitalRead(L0); //Right
+        int L1Value = digitalRead(L1); //Left
+        lineFollowing(L1Value, L0Value);
         break;
       }
     }
@@ -228,6 +229,27 @@ void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
   *v3 = v3T+spinMod;
 }
 
+
+void lineFollowing(int Left, int Right)
+{
+  int CW = 255;
+  int CCW = 0;
+ 
+  if(Left == 0 && Right == 0)
+  {
+    invKin(255, 90, 0, &v1, &v2, &v3);
+  }
+
+  else if(Left == 0 && Right == 1)
+  {
+    invKin(0, 0, CW, &v1, &v2, &v3);
+  }
+
+  else if(Left == 1 && Right == 0)
+  {
+    invKin(0, 0, CCW, &v1, &v2, &v3);
+  }
+}
 
 
 

@@ -198,18 +198,8 @@ void loop() {
         int L0Value = digitalRead(L0); //Right
         int L1Value = digitalRead(L1); //Left
         moveValues LineSenor;
-
-        LineSensor.spin = lineFollowing(L1Value, L0Value);
-        if(LineSensor.spin == 0)
-        {
-          LineSensor.speed = 255;
-          LineSensor.angle = 90;
-        }
-        else
-        {
-          LineSensor.speed = 0;
-          LineSensor.angle = 0;
-        }
+        LineSensor = lineFollowing(L1Value, L0Value);
+        
         invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3);
         motorA.setSpeed(v1);
         motorB.setSpeed(v2);
@@ -246,28 +236,6 @@ void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
 }
 
 
-float lineFollowing(int Left, int Right)
-{
-  int noSpin = 127;
-  int CW = 255;
-  int CCW = 0;
-  int spin;
-
-  if(Left == 0 && Right == 0)
-  {
-    return spin = noSpin;
-  }
-
-  else if(Left == 0 && Right == 1)
-  {
-    return spin = CW;
-  }
-
-  else if(Left == 1 && Right == 0)
-  {
-    return spin = CCW;
-  }
-}
 
 
 

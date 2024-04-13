@@ -230,7 +230,6 @@ class Distances{
 };
 
 void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3);
-void lineFollowing(int L1Value, int L0Value);
 
 
 //converts radians to degrees
@@ -248,3 +247,36 @@ float decrad(float deg)
   return deg;
 }
 
+moveValues lineFollowing(int Left, int Right)
+{
+  moveValues follow;
+
+  int noSpin = 127;
+  int CW = 255;
+  int CCW = 0;
+  int spin;
+
+  if(Left == 0 && Right == 0)
+  {
+    follow.speed = 255;
+    follow.angle = 90;
+    follow.spin = noSpin;
+  }
+
+  else if(Left == 0 && Right == 1)
+  {
+    follow.speed = 0;
+    follow.angle = 0;
+    follow.spin = CW;
+  }
+
+  else if(Left == 1 && Right == 0)
+  {
+    follow.speed = 0;
+    follow.angle = 0;
+    follow.spin = CCW;
+  }
+
+  return follow;
+  
+}

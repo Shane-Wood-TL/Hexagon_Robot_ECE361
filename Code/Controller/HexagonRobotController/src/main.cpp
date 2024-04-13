@@ -98,26 +98,27 @@ void loop() {
   //code to handle estop switch + prevent extra display refreshes
   //only go to display when value has changed
   if(readingValues.S8V != 1){
-    if(payload.eStop != true){
-      payload.eStop = true;
+    if(payload.eStop != 1){
+      payload.eStop = 1;
       updateMenu(state, payload);
     }
   }else{
-    if(payload.eStop != false){
-      payload.eStop = false;
+    if(payload.eStop != 0){
+      payload.eStop = 0;
       updateMenu(state, payload);
     }
   }
 
   //PID
+  Serial.println(payload.eStop);
   if(readingValues.S4V != 1){
-    if(payload.PID != true){
-      payload.PID = true;
+    if(payload.PID != 1){
+      payload.PID = 1;
       updateMenu(state, payload);
     }
   }else{
-    if(payload.PID != false){
-      payload.PID = false;
+    if(payload.PID != 0){
+      payload.PID = 0;
       updateMenu(state, payload);
     }
   }

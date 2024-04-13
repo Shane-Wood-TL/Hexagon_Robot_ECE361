@@ -49,8 +49,8 @@ struct PayloadStruct {
   float speed; //a int centered at 127
   float angle; //a int centered at 127
   uint8_t spin;   //a int centered at 127
-  bool eStop;  // bascially a bool
-  bool PID;
+  uint8_t eStop;  // bascially a bool
+  uint8_t PID;
   uint8_t disable;
 };
 

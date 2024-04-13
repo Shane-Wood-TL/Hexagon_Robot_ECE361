@@ -197,7 +197,7 @@ void loop() {
         //has no ability to detect intersections (tmk) so it can only follow line paths
         int L0Value = digitalRead(L0); //Right
         int L1Value = digitalRead(L1); //Left
-        moveValues LineSenor;
+        moveValues LineSensor;
         LineSensor = lineFollowing(L1Value, L0Value);
         
         invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3);

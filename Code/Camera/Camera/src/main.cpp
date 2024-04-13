@@ -35,8 +35,8 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char* ssid = "**********";
-const char* password = "**********";
+const char* ssid = "GilberttheSecond";
+const char* password = "ShaneandLogan";
 
 void startCameraServer();
 void setupLedFlash(int pin);
@@ -131,22 +131,8 @@ void setup() {
 #if defined(LED_GPIO_NUM)
   setupLedFlash(LED_GPIO_NUM);
 #endif
-
-  WiFi.begin(ssid, password);
-  WiFi.setSleep(false);
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected");
-
+  WiFi.softAP(ssid,password);
   startCameraServer();
-
-  Serial.print("Camera Ready! Use 'http://");
-  Serial.print(WiFi.localIP());
-  Serial.println("' to connect");
 }
 
 void loop() {

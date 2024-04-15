@@ -188,6 +188,13 @@ void loop() {
         motorA.setSpeed(v1);
         motorB.setSpeed(v2);
         motorC.setSpeed(v3);
+        if (wallFollow.spin == 255){
+          delay(350);
+          invKin(0,0,127, &v1, &v2, &v3);
+          motorA.setSpeed(v1);
+          motorB.setSpeed(v2);
+          motorC.setSpeed(v3);
+        }
         break;
       }
       case 2:{ //line following

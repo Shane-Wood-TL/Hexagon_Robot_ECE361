@@ -91,7 +91,7 @@ class DistanceSensor{
     }
 
     float getDistance(){
-      float duration = sonar.ping_median(5);
+      float duration = sonar.ping_median(3);
       distance = (duration / 2) * speed;
       return distance;
     }
@@ -107,6 +107,8 @@ class Distances{
     float distances[6];
     float speedOfSound;
     float intialSpeed;
+    moveValues move;
+    int oldB;
   public:
     Distances(int A, int B,int C,int D,int E,int F, float speedIntial){
         intialSpeed = speedIntial;
@@ -122,38 +124,47 @@ class Distances{
       for(int i = 0; i < 6; i++){
         distances[i] = sonar[i]->getDistance();
       }
-      // lcd.clear();
-      // lcd.setCursor(0,0);
-      // lcd.print((int)distances[0]);
+      
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print((int)distances[0]);
 
-      // lcd.setCursor(5,0);
-      // lcd.print((int)distances[1]);
+      lcd.setCursor(5,0);
+      lcd.print((int)distances[1]);
 
-      // lcd.setCursor(10,0);
-      // lcd.print((int)distances[2]);
+      lcd.setCursor(10,0);
+      lcd.print((int)distances[2]);
 
-      // lcd.setCursor(0,1);
-      // lcd.print((int)distances[3]);
+      lcd.setCursor(0,1);
+      lcd.print((int)distances[3]);
 
-      // lcd.setCursor(5,1);
-      // lcd.print((int)distances[4]);
+      lcd.setCursor(5,1);
+      lcd.print((int)distances[4]);
 
-      //  lcd.setCursor(10,1);
-      // lcd.print((int)distances[5]);
+       lcd.setCursor(10,1);
+      lcd.print((int)distances[5]);
     }
 
-    int getClosest(){
-      int sensor = 0;
-      float distance = 99999;
+    void getClosest(int *b, int *Far){
+      int nearSensor = 0;
+      int farSensor = 0;
+      float closeDistance = 99999;
+      float farDistance = 0;
       for(int i = 0; i< 6; i++){
         if (distances[i] != 0){
-          if(distances[i]< distance){
-            sensor = i;
-            distance = distances[i];
+          if(distances[i]< closeDistance){
+            nearSensor = i;
+            closeDistance = distances[i];
+          }
+          if(distances[i] > farDistance){
+            farSensor = i;
+            farDistance = distances[i];
           }
         }
       }
-      return sensor;
+      
+      *b = nearSensor;
+      *Far = farSensor;
     }
 
     void updateTemp(float temp){
@@ -163,69 +174,98 @@ class Distances{
         sonar[i]->setSpeed(soundcm);
       }
     }
+
+
     
     moveValues wallFollow(){
-      moveValues move;
+      int tooClose = 35;
       updateDistances();
-      int b = getClosest();
+      int b, Far;
+      getClosest(&b, &Far);
       move.spin =127;
-      //get the 2 nearest sensors
-      int a1 = b+1;
-      int c1 = b-1;
-      int neighbor = -1;
-      if (c1 > 5){
-        c1 = 0;
-      }
-      if (a1 < 0){
-        a1 = 5;
-      }
-      if (distances[a1] > distances[c1]){
-        neighbor = c1;
-      }else{
-        neighbor = a1;
-      }
-      lcd.clear();
-      lcd.setCursor(0,0);
-      lcd.print((int) distances[0]);
-      lcd.setCursor(5,0);
-      lcd.print((int)distances[1]);
-      lcd.setCursor(10,0);
-      lcd.print((int)distances[2]);
-      lcd.setCursor(0,1);
-      lcd.print((int) distances[3]);
-      lcd.setCursor(5,1);
-      lcd.print((int)distances[4]);
-      lcd.setCursor(10,1);
-      lcd.print((int)distances[5]);
 
-      if (b == 1 or b==4){
-        move.speed = 255;
+      // if (distances[Far] > tooFar and distances [b] > tooClose){
+      //   return move; 
+      // }
+      if(oldB != b){
+        oldB = b;
         move.angle = 0;
-        if(distances[b] > distances[neighbor]){
-          move.spin-= abs(distances[neighbor]-distances[b]);
-        }else{
-          move.spin+= abs(distances[neighbor]-distances[b]);
+        move.speed = 0;
+        move.spin = 230;
+        return move;
+      }
+      switch (b){
+        case 0:{
+          move.speed = 255;
+          move.angle = 0;
+          if(distances[b] > tooClose){
+            //go closer to wall
+            move.angle = 330;
+          }else{
+            //go futher away 
+            move.angle = 270;
+          }
         }
-      }else if(b == 2 or b==5){
-        move.speed = 255;
-        move.angle = 60;
-        if(distances[neighbor] > distances[b]){
-          move.spin-= abs(distances[neighbor] - distances[b]);
-        }else{
-          move.spin+= abs(distances[neighbor] - distances[b]);
+        case 1:{
+          move.speed = 255;
+          move.angle = 0;
+          if(distances[b] > tooClose){
+            //go closer to wall
+            move.angle = 30;
+          }else{
+            //go futher away 
+            move.angle = 330;
+          }
+          break;
         }
-      }else if(b == 0 or b==3){
-        move.speed = 255;
-        move.angle = 120;
-        if(distances[neighbor] > distances[b]){
-          move.spin-= abs(distances[neighbor] - distances[b]);
-        }else{
-          move.spin+= abs(distances[neighbor] - distances[b]);
+        case 2:{
+          move.speed = 255;
+          move.angle = 0;
+          if(distances[b] > tooClose){
+            //go closer to wall
+            move.angle = 90;
+          }else{
+            //go futher away 
+            move.angle = 30;
+          }
+          break;
+        }
+        case 3:{
+          move.speed = 255;
+          if(distances[b] > tooClose){
+            //go closer to wall
+            move.angle = 150;
+          }else{
+            //go futher away 
+            move.angle = 90;
+          }
+          break;
+        }
+        case 4:{
+          move.speed = 255;
+          if(distances[b] > tooClose){
+            //go closer to wall
+            move.angle = 210;
+          }else{
+            //go futher away 
+            move.angle = 150;
+          }
+          break;
+        }
+        case 5:{
+          move.speed = 255;
+          if(distances[b] > tooClose){
+            //go closer to wall
+            move.angle = 270;
+          }else{
+            //go futher away 
+            move.angle = 210;
+          }
+          break;
         }
       }
+     
       return move;
-
-      
     }
 };
 

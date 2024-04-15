@@ -81,7 +81,7 @@ motor motorC(C0_, C1_, enC_,7); //Mtr3
 
 //distance array instance
 //Distances(int A, int B,int C,int D,int E,int F, float speedIntial){
-Distances sonarArray(D0,D1,D2,D3,D4,D5,intialSpeedOfSound);
+Distances sonarArray(D0,19,D2,D3,D4,D5,intialSpeedOfSound);
 
 
 
@@ -146,10 +146,9 @@ void setup() {
 }
 
 void loop() {
-  getData();
-
-  invKin(payload.speed, payload.angle, payload.spin, &v1, &v2, &v3);
-    
+  //getData();
+  payload.mode = 1;
+  
   //only look at the modes if not stopped
   if (payload.eStop != 1){
     //handle nomove + nospin
@@ -168,7 +167,6 @@ void loop() {
         break;
     }
 
-
     switch(payload.mode){
       case 0:{ //user control mode
         //Dynamic direction control
@@ -186,7 +184,7 @@ void loop() {
         //if 2 walls are detected, pick a random one
         moveValues wallFollow;
         wallFollow = sonarArray.wallFollow();
-        invKin(wallFollow.speed, wallFollow.angle, 127, &v1, &v2, &v3);
+        invKin(wallFollow.speed, wallFollow.angle, wallFollow.spin, &v1, &v2, &v3);
         motorA.setSpeed(v1);
         motorB.setSpeed(v2);
         motorC.setSpeed(v3);

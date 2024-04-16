@@ -188,9 +188,28 @@ class Distances{
       //get nearest 2 sensors
       int a = (b + 1) % 6;
       int c = (b - 1 + 6) % 6;
+      int opposite = -1;
+      bool none = false;
+      //nothing detected
+      if (distances[b] == 99999){
+          b = oldB;
+          goOut = false;
+          none = true;
+      }
+
+      if(abs(distances[c] - distances[b]) > 5 or abs(distances[a] - distances[b]) > 5){
+        //do nothing, (this is trying to resolve the corner issue)
+      }else{
+        move.angle = 0;
+        move.speed = 0;
+        move.spin = 255;
+        goOut = true;
+        return move;
+      }
+
 
       //if sensor greatly changes spin and force it to move from wall on next cycle
-      if(oldB != b and a != oldB and c != oldB and !goOut){
+      if(oldB != b and a != oldB and c != oldB and !goOut and !none){
         oldB = b;
         move.angle = 0;
         move.speed = 0;
@@ -199,11 +218,16 @@ class Distances{
         return move;
       }
 
-      if (b == 5-oldB and !goOut){
+      if (b == 5-oldB and !goOut and !none){
         goOut = true;
         oldB= b;
         return move;
       }
+
+      
+      
+
+      
 
       switch (b){
         case 0:{
@@ -309,25 +333,25 @@ moveValues lineFollowing(int Left, int Right)
   moveValues follow;
 
   int noSpin = 127;
-  int CW = 255;
-  int CCW = 0;
+  int CW = 0;
+  int CCW = 255;
   int spin;
 
-  if(Left == 0 && Right == 0)
+  if(Left == 0 and Right == 0)
   {
     follow.speed = 255;
     follow.angle = 90;
     follow.spin = noSpin;
   }
 
-  else if(Left == 0 && Right == 1)
+  else if(Left == 0 and Right == 1)
   {
     follow.speed = 0;
     follow.angle = 0;
     follow.spin = CW;
   }
 
-  else if(Left == 1 && Right == 0)
+  else if(Left == 1 and Right == 0)
   {
     follow.speed = 0;
     follow.angle = 0;

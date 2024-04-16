@@ -146,9 +146,8 @@ void setup() {
 }
 
 void loop() {
-  //getData();
-  payload.mode = 1;
-  
+  getData();
+
   //only look at the modes if not stopped
   if (payload.eStop != 1){
     //handle nomove + nospin
@@ -194,6 +193,13 @@ void loop() {
           motorA.setSpeed(v1);
           motorB.setSpeed(v2);
           motorC.setSpeed(v3);
+        }else{
+          //set moving to a set distance (rather than being based on distance sensors)
+          delay(500);
+          invKin(0,0,127, &v1, &v2, &v3);
+          motorA.setSpeed(v1);
+          motorB.setSpeed(v2);
+          motorC.setSpeed(v3);
         }
         break;
       }
@@ -204,11 +210,35 @@ void loop() {
         int L1Value = digitalRead(L1); //Left
         moveValues LineSensor;
         LineSensor = lineFollowing(L1Value, L0Value);
-        
+        lcd.clear();
+        lcd.setCursor(0,0);
+        lcd.print((int)L1Value);
+
+      
+        lcd.setCursor(10,0);
+        lcd.print((int)L0Value);
+
+
+        //move with line follower
         invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3);
         motorA.setSpeed(v1);
         motorB.setSpeed(v2);
         motorC.setSpeed(v3);
+
+        //set timing for motors being on
+        if(LineSensor.speed != 0 or LineSensor.speed != 255){
+        delay(10);
+        invKin(0,0,127, &v1, &v2, &v3);
+        motorA.setSpeed(v1);
+        motorB.setSpeed(v2);
+        motorC.setSpeed(v3);
+        }else{
+          delay(250);
+          invKin(0,0,127, &v1, &v2, &v3);
+          motorA.setSpeed(v1);
+          motorB.setSpeed(v2);
+          motorC.setSpeed(v3);
+        }
         break;
       }
     }

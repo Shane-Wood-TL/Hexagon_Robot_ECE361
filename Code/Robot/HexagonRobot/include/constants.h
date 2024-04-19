@@ -41,6 +41,7 @@ struct moveValues{
   float speed;
   float angle;
   float spin;
+  int goOutV;
 };
 
 class motor{
@@ -63,12 +64,12 @@ class motor{
         //move forward
         digitalWrite(P0, HIGH);
         digitalWrite(P1, LOW);
-        ledcWrite(channel,abs(speed));
+        ledcWrite(channel, constrain(abs(speed)+20, 0, 255));
       }else if (speed < 0){
         //move forward
         digitalWrite(P0, LOW);
         digitalWrite(P1, HIGH);
-        ledcWrite(channel,abs(speed));
+        ledcWrite(channel,constrain(abs(speed)+20, 0, 255));
       }
     }
     void brake(){
@@ -171,12 +172,12 @@ class Distances{
 
     
     moveValues wallFollow(){
-      int tooClose = 50;
+      int tooClose = 45;
       updateDistances();
       int b, Far;
       getClosest(&b);
       move.spin =127;
-
+      move.goOutV = 0;
       //if all are 0
       bool none = false;
       if (b == -1){
@@ -231,6 +232,7 @@ class Distances{
           }else{
             //go futher away 
             move.angle = 240;
+            move.goOutV = 1;
             goOut = false;
           }
         }
@@ -243,6 +245,7 @@ class Distances{
           }else{
             //go futher away 
             move.angle = 300;
+            move.goOutV = 1;
             goOut = false;
           }
           break;
@@ -256,6 +259,7 @@ class Distances{
           }else{
             //go futher away 
             move.angle = 30;
+            move.goOutV = 1;
             goOut = false;
           }
           break;
@@ -268,6 +272,7 @@ class Distances{
           }else{
             //go futher away 
             move.angle = 90;
+            move.goOutV = 1;
             goOut = false;
           }
           break;
@@ -280,6 +285,7 @@ class Distances{
           }else{
             //go futher away 
             move.angle = 150;
+            move.goOutV = 1;
             goOut = false;
           }
           break;
@@ -292,6 +298,7 @@ class Distances{
           }else{
             //go futher away 
             move.angle = 210;
+            move.goOutV = 1;
             goOut = false;
           }
           break;

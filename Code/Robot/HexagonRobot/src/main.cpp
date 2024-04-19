@@ -21,7 +21,8 @@
 
 //#define printing
 
-float bmotorOffset = 0.98;
+float bmotorOffset = 1;
+float aMotorOffset = 1.07;
 
 float motorFreq = 500; 
 float minOnTime = 790;
@@ -67,7 +68,7 @@ LiquidCrystal_I2C lcd(0x3F,16,2);
 //motor class instances
 motor motorA(A0_, A1_, enA_,0); //Mtr1
 motor motorB(B0_, B1_, enB_,3); //Mtr2
-motor motorC(C0_, C1_, enC_,7); //Mtr3
+motor motorC(C0_, C1_, enC_,6); //Mtr3
 
 
 
@@ -135,12 +136,12 @@ void setup() {
   
   ledcSetup(0,1000,8);
   ledcSetup(3,1000,8);
-  ledcSetup(7,1000,8);
+  ledcSetup(6,1000,8);
 
 
   ledcAttachPin(enA_, 0);
   ledcAttachPin(enB_, 3);
-  ledcAttachPin(enC_, 7);
+  ledcAttachPin(enC_, 6);
   Serial.println("setupDone");
 
 }
@@ -170,7 +171,7 @@ void loop() {
       case 0:{ //user control mode
         //Dynamic direction control
         invKin(payload.speed, payload.angle, payload.spin, &v1, &v2, &v3);
-        motorA.setSpeed(v1);
+        motorA.setSpeed(v1*aMotorOffset);
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         break;
@@ -184,26 +185,30 @@ void loop() {
         moveValues wallFollow;
         wallFollow = sonarArray.wallFollow();
         invKin(wallFollow.speed, wallFollow.angle, wallFollow.spin, &v1, &v2, &v3);
-        motorA.setSpeed(v1);
+        motorA.setSpeed(v1*aMotorOffset);
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         if (wallFollow.spin == 255){
           delay(200);
           invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1);
+          motorA.setSpeed(v1*aMotorOffset);
           motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }else{
           //set moving to a set distance (rather than being based on distance sensors)
+          if (wallFollow.goOutV == 1){
           delay(400);
+          }else{
+            delay(200);
+          }
           //spin to account for robot not moving straight
           invKin(0,0,255, &v1, &v2, &v3);
-          motorA.setSpeed(v1);
+          motorA.setSpeed(v1*aMotorOffset);
           motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
           delay(150);
           invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1);
+          motorA.setSpeed(v1*aMotorOffset);
           motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }
@@ -227,7 +232,7 @@ void loop() {
 
         //move with line follower
         invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3);
-        motorA.setSpeed(v1);
+        motorA.setSpeed(v1*aMotorOffset);
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
 
@@ -235,13 +240,13 @@ void loop() {
         if(LineSensor.speed == 0){
           delay(150);
           invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1);
+          motorA.setSpeed(v1*aMotorOffset);
           motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }else{
           delay(15);
           invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1);
+          motorA.setSpeed(v1*aMotorOffset);
           motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }
@@ -293,9 +298,9 @@ void getData(){
 void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
 {
   float spinMod = map(spin, 0,255, -127,127);
-  float v1T = speed*sin(decrad(330-angle));
-  float v2T = speed*sin(decrad(210-angle));
-  float v3T = speed*sin(decrad(90-angle));
+  float v1T = speed*sin(decrad((330-angle)));
+  float v2T = speed*sin(decrad((210-angle)));
+  float v3T = speed*sin(decrad((90-angle)));
   *v1 = v1T+spinMod;
   *v2 = v2T+spinMod;
   *v3 = v3T+spinMod;

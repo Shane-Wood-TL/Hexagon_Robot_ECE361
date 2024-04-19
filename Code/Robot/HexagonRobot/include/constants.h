@@ -146,26 +146,18 @@ class Distances{
       lcd.print((int)distances[5]);
     }
 
-    void getClosest(int *b, int *Far){
-      int nearSensor = 0;
-      int farSensor = 0;
+    void getClosest(int *b){
+      int nearSensor = -1;
       float closeDistance = 99999;
-      float farDistance = 0;
       for(int i = 0; i< 6; i++){
         if (distances[i] != 0){
           if(distances[i]< closeDistance){
             nearSensor = i;
             closeDistance = distances[i];
           }
-          if(distances[i] > farDistance){
-            farSensor = i;
-            farDistance = distances[i];
-          }
         }
       }
-      
       *b = nearSensor;
-      *Far = farSensor;
     }
 
     void updateTemp(float temp){
@@ -179,25 +171,27 @@ class Distances{
 
     
     moveValues wallFollow(){
-      int tooClose = 35;
+      int tooClose = 50;
       updateDistances();
       int b, Far;
-      getClosest(&b, &Far);
+      getClosest(&b);
       move.spin =127;
+
+      //if all are 0
+      bool none = false;
+      if (b == -1){
+        b = oldB;
+        goOut = false;
+        none = true;
+        return move;
+      }
 
       //get nearest 2 sensors
       int a = (b + 1) % 6;
       int c = (b - 1 + 6) % 6;
-      int opposite = -1;
-      bool none = false;
-      //nothing detected
-      if (distances[b] == 99999){
-          b = oldB;
-          goOut = false;
-          none = true;
-      }
+      
 
-      if(abs(distances[c] - distances[b]) > 5 or abs(distances[a] - distances[b]) > 5){
+      if(abs(distances[c] - distances[b]) > 10 or abs(distances[a] - distances[b]) > 10){
         //do nothing, (this is trying to resolve the corner issue)
       }else{
         move.angle = 0;
@@ -218,6 +212,7 @@ class Distances{
         return move;
       }
 
+      //handling getting to close to opposite wall
       if (b == 5-oldB and !goOut and !none){
         goOut = true;
         oldB= b;
@@ -225,32 +220,29 @@ class Distances{
       }
 
       
-      
-
-      
-
+    
       switch (b){
         case 0:{
           move.speed = 255;
           move.angle = 0;
-          if(distances[b] > tooClose and !goOut){
+          if(distances[b] >= tooClose and !goOut){
             //go closer to wall
-            move.angle = 330;
+            move.angle = 0;
           }else{
             //go futher away 
-            move.angle = 270;
+            move.angle = 240;
             goOut = false;
           }
         }
         case 1:{
           move.speed = 255;
           move.angle = 0;
-          if(distances[b] > tooClose and !goOut){
+          if(distances[b] >= tooClose and !goOut){
             //go closer to wall
-            move.angle = 30;
+            move.angle = 60;
           }else{
             //go futher away 
-            move.angle = 330;
+            move.angle = 300;
             goOut = false;
           }
           break;
@@ -258,9 +250,9 @@ class Distances{
         case 2:{
           move.speed = 255;
           move.angle = 0;
-          if(distances[b] > tooClose and !goOut){
+          if(distances[b] >= tooClose and !goOut){
             //go closer to wall
-            move.angle = 90;
+            move.angle = 120;
           }else{
             //go futher away 
             move.angle = 30;
@@ -270,9 +262,9 @@ class Distances{
         }
         case 3:{
           move.speed = 255;
-          if(distances[b] > tooClose and !goOut){
+          if(distances[b] >= tooClose and !goOut){
             //go closer to wall
-            move.angle = 150;
+            move.angle = 180;
           }else{
             //go futher away 
             move.angle = 90;
@@ -282,9 +274,9 @@ class Distances{
         }
         case 4:{
           move.speed = 255;
-          if(distances[b] > tooClose and !goOut){
+          if(distances[b] >= tooClose and !goOut){
             //go closer to wall
-            move.angle = 210;
+            move.angle = 240;
           }else{
             //go futher away 
             move.angle = 150;
@@ -294,9 +286,9 @@ class Distances{
         }
         case 5:{
           move.speed = 255;
-          if(distances[b] > tooClose and !goOut){
+          if(distances[b] >= tooClose and !goOut){
             //go closer to wall
-            move.angle = 270;
+            move.angle = 300;
           }else{
             //go futher away 
             move.angle = 210;
@@ -356,6 +348,10 @@ moveValues lineFollowing(int Left, int Right)
     follow.speed = 0;
     follow.angle = 0;
     follow.spin = CCW;
+  }else{
+    follow.speed = 255;
+    follow.angle = 90;
+    follow.spin = noSpin;
   }
 
   return follow;

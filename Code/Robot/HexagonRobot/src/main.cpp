@@ -21,7 +21,7 @@
 
 //#define printing
 
-
+float bmotorOffset = 0.98;
 
 float motorFreq = 500; 
 float minOnTime = 790;
@@ -171,7 +171,7 @@ void loop() {
         //Dynamic direction control
         invKin(payload.speed, payload.angle, payload.spin, &v1, &v2, &v3);
         motorA.setSpeed(v1);
-        motorB.setSpeed(v2);
+        motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         break;
       }
@@ -185,20 +185,26 @@ void loop() {
         wallFollow = sonarArray.wallFollow();
         invKin(wallFollow.speed, wallFollow.angle, wallFollow.spin, &v1, &v2, &v3);
         motorA.setSpeed(v1);
-        motorB.setSpeed(v2);
+        motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         if (wallFollow.spin == 255){
-          delay(350);
+          delay(200);
           invKin(0,0,127, &v1, &v2, &v3);
           motorA.setSpeed(v1);
-          motorB.setSpeed(v2);
+          motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }else{
           //set moving to a set distance (rather than being based on distance sensors)
-          delay(500);
+          delay(400);
+          //spin to account for robot not moving straight
+          invKin(0,0,255, &v1, &v2, &v3);
+          motorA.setSpeed(v1);
+          motorB.setSpeed(v2*bmotorOffset);
+          motorC.setSpeed(v3);
+          delay(150);
           invKin(0,0,127, &v1, &v2, &v3);
           motorA.setSpeed(v1);
-          motorB.setSpeed(v2);
+          motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }
         break;
@@ -222,21 +228,21 @@ void loop() {
         //move with line follower
         invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3);
         motorA.setSpeed(v1);
-        motorB.setSpeed(v2);
+        motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
 
         //set timing for motors being on
-        if(LineSensor.speed != 0 or LineSensor.speed != 255){
-        delay(10);
-        invKin(0,0,127, &v1, &v2, &v3);
-        motorA.setSpeed(v1);
-        motorB.setSpeed(v2);
-        motorC.setSpeed(v3);
-        }else{
-          delay(250);
+        if(LineSensor.speed == 0){
+          delay(150);
           invKin(0,0,127, &v1, &v2, &v3);
           motorA.setSpeed(v1);
-          motorB.setSpeed(v2);
+          motorB.setSpeed(v2*bmotorOffset);
+          motorC.setSpeed(v3);
+        }else{
+          delay(15);
+          invKin(0,0,127, &v1, &v2, &v3);
+          motorA.setSpeed(v1);
+          motorB.setSpeed(v2*bmotorOffset);
           motorC.setSpeed(v3);
         }
         break;
@@ -246,7 +252,32 @@ void loop() {
     motorA.brake();
     motorB.brake();
     motorC.brake();
+    // switch (payload.mode){
+    // case(0):{
+    //   lcd.clear();
+    //   lcd.setCursor(0,0);
+    //   lcd.print("User");
+    //   break;
+    // }
+    // case(1):{
+    //   moveValues wallFollow;
+    //   wallFollow = sonarArray.wallFollow();
+    //   break;
+    // }
+    // case(2):{
+    //  int L0Value = digitalRead(L0); //Right
+    //   int L1Value = digitalRead(L1); //Left 
+    //   lcd.clear();
+    //   lcd.setCursor(0,0);
+    //   lcd.print((int)L1Value);
+     
+    //   lcd.setCursor(10,0);
+    //   lcd.print((int)L0Value);
+    //   break;
+    // }
+    // }
   }
+
 }
 
 

@@ -143,12 +143,12 @@ void setup() {
   ledcAttachPin(enB_, 3);
   ledcAttachPin(enC_, 6);
   Serial.println("setupDone");
-
+  sonarArray.startUp = true;
 }
 
 void loop() {
-  getData();
-
+  //getData();
+  payload.mode = 1;
   //only look at the modes if not stopped
   if (payload.eStop != 1){
     //handle nomove + nospin
@@ -174,6 +174,7 @@ void loop() {
         motorA.setSpeed(v1*aMotorOffset);
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
+        sonarArray.startUp = true;
         break;
       }
       case 1:{ //wall following
@@ -188,35 +189,12 @@ void loop() {
         motorA.setSpeed(v1*aMotorOffset);
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
-        if (wallFollow.spin == 255){
-          delay(200);
-          invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1*aMotorOffset);
-          motorB.setSpeed(v2*bmotorOffset);
-          motorC.setSpeed(v3);
-        }else{
-          //set moving to a set distance (rather than being based on distance sensors)
-          if (wallFollow.goOutV == 1){
-          delay(400);
-          }else{
-            delay(200);
-          }
-          //spin to account for robot not moving straight
-          invKin(0,0,255, &v1, &v2, &v3);
-          motorA.setSpeed(v1*aMotorOffset);
-          motorB.setSpeed(v2*bmotorOffset);
-          motorC.setSpeed(v3);
-          delay(150);
-          invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1*aMotorOffset);
-          motorB.setSpeed(v2*bmotorOffset);
-          motorC.setSpeed(v3);
-        }
         break;
       }
       case 2:{ //line following
         //use pid to increase speed and reduce the bouncing from one extreme to the other
         //has no ability to detect intersections (tmk) so it can only follow line paths
+        sonarArray.startUp = true;
         int L0Value = digitalRead(L0); //Right
         int L1Value = digitalRead(L1); //Left
         moveValues LineSensor;
@@ -257,30 +235,7 @@ void loop() {
     motorA.brake();
     motorB.brake();
     motorC.brake();
-    // switch (payload.mode){
-    // case(0):{
-    //   lcd.clear();
-    //   lcd.setCursor(0,0);
-    //   lcd.print("User");
-    //   break;
-    // }
-    // case(1):{
-    //   moveValues wallFollow;
-    //   wallFollow = sonarArray.wallFollow();
-    //   break;
-    // }
-    // case(2):{
-    //  int L0Value = digitalRead(L0); //Right
-    //   int L1Value = digitalRead(L1); //Left 
-    //   lcd.clear();
-    //   lcd.setCursor(0,0);
-    //   lcd.print((int)L1Value);
-     
-    //   lcd.setCursor(10,0);
-    //   lcd.print((int)L0Value);
-    //   break;
-    // }
-    // }
+    sonarArray.startUp = true;
   }
 
 }

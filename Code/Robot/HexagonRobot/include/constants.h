@@ -88,11 +88,14 @@ class DistanceSensor{
     float speed;
     float distance;
   public:
-    DistanceSensor(int pinV, float speedV) : sonar(pinV, pinV, 100), speed(speedV) {
+    DistanceSensor(int pinV, float speedV) : sonar(pinV, pinV, 70), speed(speedV) {
     }
 
     float getDistance(){
       float duration = sonar.ping_median(3);
+      if (duration == 0){
+        return 0;
+      }
       distance = (duration / 2) * speed;
       return distance;
     }
@@ -110,8 +113,12 @@ class Distances{
     float intialSpeed;
     moveValues move;
     int oldB;
-    bool goOut;
+    int b;
+    float oldAngle;
+    int  sensor_angles[6] = {30,90,150,210,270,330};
+
   public:
+    bool startUp = true;
     Distances(int A, int B,int C,int D,int E,int F, float speedIntial){
         intialSpeed = speedIntial;
         sonar[0] = new DistanceSensor(A,intialSpeed);
@@ -121,6 +128,7 @@ class Distances{
         sonar[4] = new DistanceSensor(E,intialSpeed);
         sonar[5] = new DistanceSensor(F,intialSpeed);
         updateDistances();
+        getClosest(&b);
     }
     void updateDistances(){
       for(int i = 0; i < 6; i++){
@@ -163,150 +171,133 @@ class Distances{
 
     void updateTemp(float temp){
       float soundsp = 331.4 + (0.606 * temp);
-      float soundcm = soundsp / 10000;
+      float soundcm = soundsp / 10000.0;
       for(int i = 0; i< 6; i++){
         sonar[i]->setSpeed(soundcm);
       }
     }
 
 
-    
-    moveValues wallFollow(){
-      int tooClose = 45;
-      updateDistances();
-      int b, Far;
-      getClosest(&b);
-      move.spin =127;
-      move.goOutV = 0;
-      //if all are 0
-      bool none = false;
-      if (b == -1){
-        b = oldB;
-        goOut = false;
-        none = true;
-        return move;
-      }
+moveValues wallFollow() {
+  const int tooClose = 30; // goal distance
 
-      //get nearest 2 sensors
-      int a = (b + 1) % 6;
-      int c = (b - 1 + 6) % 6;
-      
+  move.spin = 127; // Default spin value
+  move.speed = 255;
+  float closerSpeed = 200;
+  float spinClose = 0;
+  float spinFar = 0;
+  updateDistances();
+  getClosest(&b);
 
-      if(abs(distances[c] - distances[b]) > 10 or abs(distances[a] - distances[b]) > 10){
-        //do nothing, (this is trying to resolve the corner issue)
-      }else{
-        move.angle = 0;
-        move.speed = 0;
-        move.spin = 255;
-        goOut = true;
-        return move;
-      }
+  // Handle case when no wall is detected aka do whatever was being done before
+  if (b == -1) {
+    b = oldB;
+    distances[b] = tooClose+1;
+  }
 
+  //handling getting to close to opposite wall
+  int opposite = -1;
+  switch(oldB){
+    case 0:{opposite = 3;}
+    case 1:{opposite = 4;}
+    case 2:{opposite = 5;}
+    case 3:{opposite = 0;}
+    case 4:{opposite = 1;}
+    case 5:{opposite = 2;}
+  }
 
-      //if sensor greatly changes spin and force it to move from wall on next cycle
-      if(oldB != b and a != oldB and c != oldB and !goOut and !none){
-        oldB = b;
-        move.angle = 0;
-        move.speed = 0;
-        move.spin = 255;
-        goOut = true;
-        return move;
-      }
+  
+  // //might want to remove, it could be conflicting with the other code
+  if (b == opposite and !startUp){
+    b = oldB;
+    distances[b] = tooClose+1;
+  }
 
-      //handling getting to close to opposite wall
-      if (b == 5-oldB and !goOut and !none){
-        goOut = true;
-        oldB= b;
-        return move;
-      }
-
-      
-    
-      switch (b){
+  switch (b){
         case 0:{
-          move.speed = 255;
           move.angle = 0;
-          if(distances[b] >= tooClose and !goOut){
+          if(distances[b] >= tooClose){
             //go closer to wall
-            move.angle = 0;
+            move.angle = 30;
+            move.speed = closerSpeed;
           }else{
             //go futher away 
-            move.angle = 240;
-            move.goOutV = 1;
-            goOut = false;
+            move.angle = 150;
           }
+          break;
         }
         case 1:{
-          move.speed = 255;
           move.angle = 0;
-          if(distances[b] >= tooClose and !goOut){
+          if(distances[b] >= tooClose){
             //go closer to wall
-            move.angle = 60;
+            move.angle = 90;
+            move.speed = closerSpeed;
           }else{
             //go futher away 
-            move.angle = 300;
-            move.goOutV = 1;
-            goOut = false;
+            move.angle = 210;
           }
           break;
         }
         case 2:{
-          move.speed = 255;
           move.angle = 0;
-          if(distances[b] >= tooClose and !goOut){
+          if(distances[b] >= tooClose){
             //go closer to wall
-            move.angle = 120;
+            move.angle = 150;
+            move.speed = closerSpeed;
           }else{
             //go futher away 
-            move.angle = 30;
-            move.goOutV = 1;
-            goOut = false;
+            move.angle = 270;
           }
           break;
         }
         case 3:{
-          move.speed = 255;
-          if(distances[b] >= tooClose and !goOut){
+          if(distances[b] >= tooClose){
             //go closer to wall
-            move.angle = 180;
+            move.angle = 210;
+            move.speed = closerSpeed;
           }else{
             //go futher away 
-            move.angle = 90;
-            move.goOutV = 1;
-            goOut = false;
+            move.angle = 330;
           }
           break;
         }
         case 4:{
-          move.speed = 255;
-          if(distances[b] >= tooClose and !goOut){
+          if(distances[b] >= tooClose){
             //go closer to wall
-            move.angle = 240;
+            move.angle = 270;
+            move.speed = closerSpeed;
           }else{
             //go futher away 
-            move.angle = 150;
-            move.goOutV = 1;
-            goOut = false;
+            move.angle = 30;
           }
           break;
         }
         case 5:{
-          move.speed = 255;
-          if(distances[b] >= tooClose and !goOut){
+          if(distances[b] >= tooClose){
             //go closer to wall
-            move.angle = 300;
+            move.angle = 330;
+            move.speed = closerSpeed;
           }else{
             //go futher away 
-            move.angle = 210;
-            move.goOutV = 1;
-            goOut = false;
+            move.angle = 90;
           }
           break;
         }
       }
-     
-      return move;
+  if (oldAngle != move.angle){
+      float oppositeAngle = std::fmod(oldAngle + 180, 360);
+
+    // Check if current angle is opposite or within -+30 degrees of being opposite to the old angle
+    if ((move.angle >= oppositeAngle - 40 && move.angle <= oppositeAngle + 40) ||
+        (move.angle >= (oppositeAngle + 180) - 40 && move.angle <= (oppositeAngle + 180) + 40)){
+        move.angle = oldAngle;
+      }else{
+          oldAngle = move.angle;
     }
+  }
+  oldB = b;
+  return move;
+}
 };
 
 void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3);

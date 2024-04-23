@@ -1,5 +1,5 @@
 #include <constants.h>
-
+//display from main.cpp
 extern LiquidCrystal_I2C lcd;
 
 
@@ -30,14 +30,6 @@ void updateMenu(int state, PayloadStruct payload){
       lcd.print("STOP");
   }else{
       lcd.setCursor(0,1);
-      lcd.print("   ");
-  }
-
-  if(payload.PID == true){
-    lcd.setCursor(5,1);
-      lcd.print("PID");
-  }else{
-      lcd.setCursor(5,1);
       lcd.print("   ");
   }
 

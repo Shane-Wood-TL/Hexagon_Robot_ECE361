@@ -50,6 +50,7 @@
 //pwm values
 #define pwmHz 1000
 #define pwmBit 8
+
 //distance sensor input output pins
 #define D0 37
 #define D1 19
@@ -101,6 +102,19 @@ struct moveValues{
   float angle;
   float spin;
 };
+
+
+//struct from the controller
+struct PayloadStruct {
+  uint8_t mode;   //simple mode, basic int
+  float speed; //a int centered at 127
+  float angle; //a int centered at 127
+  uint8_t spin = 127;   //a int centered at 127
+  uint8_t eStop;  // bascially a bool
+  uint8_t disable;
+};
+
+extern PayloadStruct payload; //payload struct from main
 
 //motor class, handles direction given a +- value and speed
 class motor{
@@ -339,7 +353,20 @@ moveValues wallFollow() {
 
 
 
+//converts radians to degrees
+float raddec(float rad)
+{
+  rad = rad * (180 / PI);
+  return rad;
+}
 
+
+//converts degrees to radians
+float decrad(float deg)
+{
+  deg = deg * (PI / 180);
+  return deg;
+}
 
 
 //sets the motor speeds and direction
@@ -357,20 +384,7 @@ void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
 
 
 
-//converts radians to degrees
-float raddec(float rad)
-{
-  rad = rad * (180 / PI);
-  return rad;
-}
 
-
-//converts degrees to radians
-float decrad(float deg)
-{
-  deg = deg * (PI / 180);
-  return deg;
-}
 
 //line following function
 moveValues lineFollowing(int Left, int Right)
@@ -417,17 +431,6 @@ moveValues lineFollowing(int Left, int Right)
 void getData(){
    if (radio.available()) {
     radio.read(&payload, sizeof(payload));
-    newData = true;
   }
 }
 
-
-struct PayloadStruct {
-  uint8_t mode;   //simple mode, basic int
-  float speed; //a int centered at 127
-  float angle; //a int centered at 127
-  uint8_t spin = 127;   //a int centered at 127
-  uint8_t eStop;  // bascially a bool
-  uint8_t PID;
-  uint8_t disable;
-};

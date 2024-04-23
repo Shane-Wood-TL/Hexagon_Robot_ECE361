@@ -191,6 +191,9 @@ void loop() {
     motorA.brake();
     motorB.brake();
     motorC.brake();
+
+    //only update temperature when stopped
+    sonarArray.updateTemp(bmp.readTemperature());
   }
 
 }

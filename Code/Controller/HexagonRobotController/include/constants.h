@@ -9,16 +9,20 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
-
+//pin definintions
+//SPI
 #define MISO 10
 #define MOSI 11
 #define SCK 12
 #define SCN 13
 #define CE 14
 
+//I2C
 #define SDA 4
 #define SCL 5
 
+
+//Switches
 #define S0 1
 #define S1 2
 #define S2 42
@@ -30,6 +34,8 @@
 #define S8 36
 #define S9 35
 
+
+//joysticks
 #define Y0 15
 #define X0 16
 #define J0 17
@@ -38,22 +44,24 @@
 #define X1 8
 #define J1 9
 
+
+//menu states
 #define maxStates 3
 
 
 
 
-
+//struct sent by the controller
 struct PayloadStruct {
   uint8_t mode;   //simple mode, basic int
   float speed; //a int centered at 127
   float angle; //a int centered at 127
   uint8_t spin;   //a int centered at 127
   uint8_t eStop;  // bascially a bool
-  uint8_t PID;
   uint8_t disable;
 };
 
+//struct for all controller inputs
 struct inputValues{
   //switches
   int S0V;
@@ -77,7 +85,7 @@ struct inputValues{
 
 
 
-
+//menu functions
 void updateMenu(int state, PayloadStruct payload);
 int decState(int state);
 int incState(int state);

@@ -1,12 +1,12 @@
 #include <constants.h>
 
-
+//#define debugging
 
 //radio variables
 PayloadStruct payload;
 RF24 radio(CE,SCN);
 bool newData = false;
-const byte slaveAddress[5]  = {'T','r','i','n','E'};
+const byte radioAddress[5]  = {'T','r','i','n','E'};
 
 
 //display object
@@ -20,8 +20,10 @@ int oldState = 0;
 int state = 0;
 
 void setup() {
+  #ifdef debugging
   //Start serial
   Serial.begin(115200);
+  #endif
 
   //start i2c
   Wire.begin(SDA,SCL);
@@ -39,7 +41,9 @@ void setup() {
   
   // begin radio
   if (!radio.begin()) {
-    Serial.println(F("radio hardware is not responding!!"));
+    #ifdef debugging
+      Serial.println(F("radio hardware is not responding!!"));
+    #endif
     lcd.print("no radio");
     while (1) {}  // hold in infinite loop
   }
@@ -49,7 +53,7 @@ void setup() {
   radio.setDataRate( RF24_250KBPS );
   radio.setRetries(3,5); // delay, count
   radio.setPALevel(RF24_PA_MIN);
-  radio.openWritingPipe(slaveAddress);
+  radio.openWritingPipe(radioAddress);
 
   //display that radio working
   lcd.clear();
@@ -76,27 +80,10 @@ void setup() {
 }
 
 void loop() {
-  bool sent;
+  //update input values
   updateAll(readingValues);
 
-  //some basic fixed inputs
-  //confirmed additions
-  //sw4 is the on the left 
-  //SW4(8,9) Estop / nothing / nothing
-  //SW3(6,7) Mode switcher  / nothing / nothing
-
-  //maybe additions
-  //SW2(4,5) PID (for line following mode)(for wall following mode) / nothing / nothing 
-  //SW1(3,2) disable spin / nothing / disable move
-  //SW0(0,1) nothing / nothing / nothing
-
-
-
-  //switches are active low eg flipped = 0
-
-
-  //code to handle estop switch + prevent extra display refreshes
-  //only go to display when value has changed
+  //update estop
   if(readingValues.S8V != 1){
     if(payload.eStop != 1){
       payload.eStop = 1;
@@ -109,19 +96,6 @@ void loop() {
     }
   }
 
-  //PID
-  Serial.println(payload.eStop);
-  if(readingValues.S4V != 1){
-    if(payload.PID != 1){
-      payload.PID = 1;
-      updateMenu(state, payload);
-    }
-  }else{
-    if(payload.PID != 0){
-      payload.PID = 0;
-      updateMenu(state, payload);
-    }
-  }
 
   //3 and 2 (disable spin, disable move)
   // no disable = 0
@@ -182,24 +156,15 @@ void loop() {
   float adjustedY = constrain((map(readingValues.J0YV, 0, 4096, 255,-255)+4), -255, 255);
   float speed = sqrt(pow(adjustedX,2)+ pow(adjustedY,2));
   float angle = atan2(adjustedY, adjustedX);
-  // Serial.print(adjustedX);
-  // Serial.print("  ");
-  // Serial.print(adjustedY);
-  // Serial.print("  ");
-  // Serial.print(speed);
-  // Serial.print("  ");
+
   angle = angle * (180.0/3.14);
   if (angle < 0){
     angle +=360;
   }
   payload.angle = angle;
   payload.speed= speed;
-  //Serial.println(angle);
-  //JOXV = 4095 2119 1
-  //JOYV = 4095 1981 7
-  //J1XV = 4095 2025 3
-  //J1YV = 4095 3345 340
-  //this joystick is very trash, very bad, non linear
+
+
   int j1x = 127;
   if (readingValues.J1XV >= 3300){
     j1x = constrain(int(map(readingValues.J1XV, 3300, 4096, 127,0)), 0, 255);
@@ -207,12 +172,9 @@ void loop() {
     j1x = constrain(int(map(readingValues.J1XV, 3329, 340, 127,255)), 0, 255);
   }
   payload.spin = j1x;
-  
-;
 
 
-
-  sent = radio.write(&payload, sizeof(PayloadStruct)); //actually send values
+  radio.write(&payload, sizeof(PayloadStruct)); //actually send values
 }
 
 

@@ -1,9 +1,33 @@
 #include <Arduino.h>
+
+//distance sensor library
 #include <NewPing.h>
 
+//radio libraries
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+//line following library
+#include <PID_v1.h> 
+
+//wall following library
+#include <math.h>
+
+//temp + display libraries
+#include <Wire.h>
+#include <Adafruit_BMP085.h>
+#include <LiquidCrystal_I2C.h>
+
+
+//all constant pin declarations
+
+//I2C pins
 #define SDA 4
 #define SCL 5
 
+
+//motor output pins
 #define A0_ 6
 #define A1_ 36
 #define enA_ 15
@@ -16,34 +40,69 @@
 #define C1_ 2
 #define enC_ 7
 
+
+//internal pwm channel numbers
+#define aChannel 0
+#define bChannel 3
+#define cChannel 6
+
+
+//pwm values
+#define pwmHz 1000
+#define pwmBit 8
+//distance sensor input output pins
 #define D0 37
-#define D1 17
+#define D1 19
 #define D2 9
 #define D3 35
 #define D4 39
 #define D5 40
 
+
+//spi pins
 #define MISO 10
 #define MOSI 11
 #define SCK 12
 #define SCN 13
 #define CE 14
 
+
+//line following pins
 #define L0 18
 #define L1 8
 
+
+//joystick settings
 #define JOYSTICK_CENTER 128
 #define PWM_FREQ 1000
 
+//max distance measured by hc-sr04
+#define maxDistance 70
+
+
+//base increase to pwm signal
+#define pwmGain 20
+
+#define bit8Max 255
+
+
+#define noSpin 127 //value where spin is zeroed
+
+//display defined in main.cpp
 extern LiquidCrystal_I2C lcd;
 
+//radio from main
+extern RF24 radio;
+
+
+//struct to send movement values to main
 struct moveValues{
   float speed;
   float angle;
   float spin;
-  int goOutV;
 };
 
+//motor class, handles direction given a +- value and speed
 class motor{
   private:
     int P0;
@@ -61,18 +120,21 @@ class motor{
       if(speed == 0){
         brake();
       }else if (speed > 0){
-        //move forward
+        //move forwards
         digitalWrite(P0, HIGH);
         digitalWrite(P1, LOW);
-        ledcWrite(channel, constrain(abs(speed)+20, 0, 255));
+        //bumping up the min signal by gain
+        ledcWrite(channel, constrain(abs(speed)+pwmGain, 0, bit8Max));
       }else if (speed < 0){
-        //move forward
+        //move backwards
         digitalWrite(P0, LOW);
         digitalWrite(P1, HIGH);
-        ledcWrite(channel,constrain(abs(speed)+20, 0, 255));
+        //bumping up the min signal gain
+        ledcWrite(channel,constrain(abs(speed)+pwmGain, 0, bit8Max));
       }
     }
     void brake(){
+      //stop motor
       digitalWrite(P0, HIGH);
       digitalWrite(P1, HIGH);
     }
@@ -81,30 +143,35 @@ class motor{
 
 
 
-
+//class that handles the distance sensor code
 class DistanceSensor{
   private:
     NewPing sonar;
     float speed;
     float distance;
   public:
-    DistanceSensor(int pinV, float speedV) : sonar(pinV, pinV, 70), speed(speedV) {
+    DistanceSensor(int pinV, float speedV) : sonar(pinV, pinV, maxDistance), speed(speedV) {
     }
 
     float getDistance(){
+      //run sensor once
       float duration = sonar.ping_median(1);
+      //instant hit (does not work correctlly / impossible or out of range)
       if (duration == 0){
         return 0;
       }
+      //only get one path (duration has sending and receiving time)
+      //mutiply by current speed of sound to get cm
       distance = (duration / 2) * speed;
       return distance;
     }
     void setSpeed(float speedV){
+      //set the speed of sound
       speed = speedV;
     }
 };
 
-
+//sonar array class
 class Distances{
   private:
     DistanceSensor *sonar[6];
@@ -112,14 +179,11 @@ class Distances{
     float speedOfSound;
     float intialSpeed;
     moveValues move;
-    int oldB;
     int b;
-    float oldAngle;
-    int  sensor_angles[6] = {30,90,150,210,270,330};
 
   public:
-    bool startUp = true;
     Distances(int A, int B,int C,int D,int E,int F, float speedIntial){
+      // set up distance sensors 
         intialSpeed = speedIntial;
         sonar[0] = new DistanceSensor(A,intialSpeed);
         sonar[1] = new DistanceSensor(B,intialSpeed);
@@ -127,14 +191,17 @@ class Distances{
         sonar[3] = new DistanceSensor(D,intialSpeed);
         sonar[4] = new DistanceSensor(E,intialSpeed);
         sonar[5] = new DistanceSensor(F,intialSpeed);
+        //get initial distances
         updateDistances();
+        //get closest sensor
         getClosest(&b);
     }
     void updateDistances(){
+      //update all 6 sensors
       for(int i = 0; i < 6; i++){
         distances[i] = sonar[i]->getDistance();
       }
-      
+      //display values to screen
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print((int)distances[0]);
@@ -156,13 +223,14 @@ class Distances{
     }
 
     void getClosest(int *b){
+      //find the sensor with the lowest non-zero distance
       int nearSensor = -1;
-      float closeDistance = 99999;
+      float closeDistance = 99999; //value that all sensors should be less than
       for(int i = 0; i< 6; i++){
         if (distances[i] != 0){
           if(distances[i]< closeDistance){
             nearSensor = i;
-            closeDistance = distances[i];
+            closeDistance = distances[i]; //update the nearest value and sensor value
           }
         }
       }
@@ -170,8 +238,10 @@ class Distances{
     }
 
     void updateTemp(float temp){
+      //update the temperature given a temp in C
       float soundsp = 331.4 + (0.606 * temp);
       float soundcm = soundsp / 10000.0;
+      //update all of the sensors
       for(int i = 0; i< 6; i++){
         sonar[i]->setSpeed(soundcm);
       }
@@ -179,57 +249,50 @@ class Distances{
 
 
 moveValues wallFollow() {
-  const int tooClose = 30; // goal distance
-
+  const int tooClose = 33; // distance to move away from wall
+  const int tooFar = 38; // distance to move towards wall
   move.spin = 127; // Default spin value
-  move.speed = 255;
-  float closerSpeed = 200;
-  float spinClose = 0;
-  float spinFar = 0;
-  float tooFar = 35;
-  float angleSpread = 30;
-  updateDistances();
+  move.speed = 255; //max speed if going away / forward
+  float closerSpeed = 200; //speed of moving towards wall
+
+  updateDistances(); //update sensors
   getClosest(&b);
+
+  move.angle = 0; //default direction
 
 
   switch (b){
         case 0:{
-          move.angle = 0;
           if(distances[b] <= tooClose){
             move.angle = 150;
             move.speed = closerSpeed;
-            move.spin += spinClose;
+            //move away from wall
           }else if(distances[b] >= tooFar){
             move.angle = 90;
-            move.spin += spinFar;
+            //move towards wall
           }else{
             move.angle = 120;
+            //move forward parrallel with wall
           }
           break;
         }
         case 1:{
-          move.angle = 0;
           if(distances[b] <= tooClose){
             move.angle = 210;
             move.speed = closerSpeed;
-            move.spin += spinClose;
           }else if(distances[b] >= tooFar){
             move.angle = 150;
-            move.spin += spinFar;
           }else{
             move.angle = 180;
           }
           break;
         }
         case 2:{
-          move.angle = 0;
           if(distances[b] <= tooClose){
             move.angle = 270;
             move.speed = closerSpeed;
-            move.spin += spinClose;
           }else if(distances[b] >= tooFar){
             move.angle = 210;
-            move.spin += spinFar;
           }else{
             move.angle = 240;
           }
@@ -239,10 +302,8 @@ moveValues wallFollow() {
           if(distances[b] <= tooClose){
             move.angle = 330;
             move.speed = closerSpeed;
-            move.spin += spinClose;
           }else if(distances[b] >= tooFar){
             move.angle = 270;
-            move.spin += spinFar;
           }else{
             move.angle = 300;
           }
@@ -252,10 +313,8 @@ moveValues wallFollow() {
           if(distances[b] <= tooClose){
             move.angle = 30;
             move.speed = closerSpeed;
-            move.spin += spinClose;
           }else if(distances[b] >= tooFar){
             move.angle = 330;
-            move.spin += spinFar;
           }else{
             move.angle = 0;
           }
@@ -265,22 +324,37 @@ moveValues wallFollow() {
           if(distances[b] <= tooClose){
             move.angle = 90;
             move.speed = closerSpeed;
-            move.spin += spinClose;
           }else if(distances[b] >= tooFar){
             move.angle = 30;
-            move.spin += spinFar;
           }else{
             move.angle = 60;
           }
           break;
         }
       }
-  oldB = b;
-  return move;
+  return move; //send values back to main
 }
 };
 
-void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3);
+
+
+
+
+
+
+//sets the motor speeds and direction
+void invKin(float speed, float angle, int spin, float* v1, float* v2, float* v3)
+{
+  float spinMod = map(spin, 0,255, -127,127); //spinning
+  float v1T = speed*sin(decrad((330-angle)));
+  float v2T = speed*sin(decrad((210-angle)));
+  float v3T = speed*sin(decrad((90-angle)));
+  *v1 = v1T+spinMod; //add spinning
+  *v2 = v2T+spinMod;
+  *v3 = v3T+spinMod;
+}
+
+
 
 
 //converts radians to degrees
@@ -298,35 +372,35 @@ float decrad(float deg)
   return deg;
 }
 
+//line following function
 moveValues lineFollowing(int Left, int Right)
 {
-  moveValues follow;
+  moveValues follow; //value to move to on return
 
-  int noSpin = 127;
-  int CW = 0;
-  int CCW = 255;
-  int spin;
+  int CW = 0; //clockwise turn
+  int CCW = 255; //ccw turn
 
+  //not detected, move forward
   if(Left == 0 and Right == 0)
   {
     follow.speed = 255;
     follow.angle = 90;
     follow.spin = noSpin;
   }
-
+  //detected, turn right / cw
   else if(Left == 0 and Right == 1)
   {
     follow.speed = 0;
     follow.angle = 0;
     follow.spin = CW;
   }
-
+  //detected, turn left / ccw
   else if(Left == 1 and Right == 0)
   {
     follow.speed = 0;
     follow.angle = 0;
     follow.spin = CCW;
-  }else{
+  }else{ //default going forward
     follow.speed = 255;
     follow.angle = 90;
     follow.spin = noSpin;
@@ -335,3 +409,25 @@ moveValues lineFollowing(int Left, int Right)
   return follow;
   
 }
+
+
+
+
+//gets data from radio, checks if data was recieved
+void getData(){
+   if (radio.available()) {
+    radio.read(&payload, sizeof(payload));
+    newData = true;
+  }
+}
+
+
+struct PayloadStruct {
+  uint8_t mode;   //simple mode, basic int
+  float speed; //a int centered at 127
+  float angle; //a int centered at 127
+  uint8_t spin = 127;   //a int centered at 127
+  uint8_t eStop;  // bascially a bool
+  uint8_t PID;
+  uint8_t disable;
+};

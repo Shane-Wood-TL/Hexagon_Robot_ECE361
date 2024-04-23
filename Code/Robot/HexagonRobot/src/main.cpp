@@ -147,7 +147,7 @@ void setup() {
 }
 
 void loop() {
-  //getData();
+  getData();
   payload.mode = 1;
   //only look at the modes if not stopped
   if (payload.eStop != 1){

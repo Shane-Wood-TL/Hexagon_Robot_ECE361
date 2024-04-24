@@ -131,8 +131,8 @@ void loop() {
       case 0:{ //user control mode
         //Dynamic direction control
         invKin(payload.speed, payload.angle, payload.spin, &v1, &v2, &v3); //map controller values to speed, direction and spin
-        motorA.setSpeed(v1*aMotorOffset); //set motor speeds + direction
-        motorB.setSpeed(v2*bmotorOffset);
+        motorA.setSpeed(v1); //set motor speeds + direction
+        motorB.setSpeed(v2*.9);
         motorC.setSpeed(v3);
         break;
       }
@@ -140,7 +140,8 @@ void loop() {
         moveValues wallFollow;
         wallFollow = sonarArray.wallFollow(); //get what move to make
         invKin(wallFollow.speed, wallFollow.angle, wallFollow.spin, &v1, &v2, &v3); //move
-        motorA.setSpeed(v1*aMotorOffset); //set motor speeds + direction
+        motorA.setSpeed(v1*aMotorOffset*.63); //set motor speeds + direction
+        //65 works
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         break;

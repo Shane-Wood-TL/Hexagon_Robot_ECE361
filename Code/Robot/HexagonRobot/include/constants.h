@@ -138,6 +138,9 @@ class motor{
         digitalWrite(P0, HIGH);
         digitalWrite(P1, LOW);
         //bumping up the min signal by gain
+        if(abs(speed) >= 235){
+          speed = 235;
+        }
         ledcWrite(channel, constrain(abs(speed)+pwmGain, 0, bit8Max));
       }else if (speed < 0){
         //move backwards

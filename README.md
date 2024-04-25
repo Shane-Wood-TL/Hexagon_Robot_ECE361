@@ -2,7 +2,10 @@
  
 ### Shane Wood and Logan Martin 
 
-### Render of robot
+### Final Robot
+![1PXL_20240423_235646060 RAW-01 COVER](https://github.com/Shane-Wood-TL/Hexagon_Robot_ECE361/assets/15756211/9b483045-d476-477a-ba74-8e674d564530)
+
+### EarlyRender of robot
 ![robo2](https://github.com/Shane-Wood-TL/Hexagon_Robot_ECE361/assets/15756211/02b7d207-e545-4fad-8f13-c57677bbf4a8)
 
 

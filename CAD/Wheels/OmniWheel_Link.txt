@@ -1,1 +1,6 @@
-https://www.printables.com/model/94913-easy-omniwheel/files
+https://www.thingiverse.com/thing:5031000
+
+Scaled to 175%
+PLA for wheel body pieces
+
+TPU 95A for rollers

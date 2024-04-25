@@ -141,7 +141,6 @@ void loop() {
         wallFollow = sonarArray.wallFollow(); //get what move to make
         invKin(wallFollow.speed, wallFollow.angle, wallFollow.spin, &v1, &v2, &v3); //move
         motorA.setSpeed(v1*aMotorOffset*.63); //set motor speeds + direction
-        //65 works
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         break;

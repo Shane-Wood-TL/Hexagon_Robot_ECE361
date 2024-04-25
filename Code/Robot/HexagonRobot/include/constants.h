@@ -400,7 +400,7 @@ moveValues lineFollowing(int Left, int Right)
   //not detected, move forward
   if(Left == 0 and Right == 0)
   {
-    follow.speed = 255;
+    follow.speed = 230;
     follow.angle = 90;
     follow.spin = noSpin;
   }
@@ -418,7 +418,7 @@ moveValues lineFollowing(int Left, int Right)
     follow.angle = 0;
     follow.spin = CCW;
   }else{ //default going forward
-    follow.speed = 255;
+    follow.speed = 230;
     follow.angle = 90;
     follow.spin = noSpin;
   }

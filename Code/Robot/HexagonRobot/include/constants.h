@@ -89,6 +89,10 @@
 
 #define noSpin 127 //value where spin is zeroed
 
+#define lineFollowingSpeed 230 //max speed when line following
+#define wallFollowStalling 0.6 //wall following needs a motor to stall partially to work
+
+
 //display defined in main.cpp
 extern LiquidCrystal_I2C lcd;
 
@@ -400,7 +404,7 @@ moveValues lineFollowing(int Left, int Right)
   //not detected, move forward
   if(Left == 0 and Right == 0)
   {
-    follow.speed = 230;
+    follow.speed = lineFollowingSpeed;
     follow.angle = 90;
     follow.spin = noSpin;
   }
@@ -418,7 +422,7 @@ moveValues lineFollowing(int Left, int Right)
     follow.angle = 0;
     follow.spin = CCW;
   }else{ //default going forward
-    follow.speed = 230;
+    follow.speed = lineFollowingSpeed;
     follow.angle = 90;
     follow.spin = noSpin;
   }

@@ -1,10 +1,10 @@
-//class defintions and constants
+//class defintions, structures, functions and constants
 #include <constants.h>
 
 #define debugging
 
 //motor rebalancing
-float bmotorOffset = 1;
+float bmotorOffset = 0.9;
 float aMotorOffset = 1.07;
 
 float intialSpeedOfSound = 0.0343; //in cm/mirco second 
@@ -140,7 +140,7 @@ void loop() {
         moveValues wallFollow;
         wallFollow = sonarArray.wallFollow(); //get what move to make
         invKin(wallFollow.speed, wallFollow.angle, wallFollow.spin, &v1, &v2, &v3); //move
-        motorA.setSpeed(v1*aMotorOffset*.63); //set motor speeds + direction
+        motorA.setSpeed(v1*aMotorOffset*wallFollowStalling); //set motor speeds + direction
         motorB.setSpeed(v2*bmotorOffset);
         motorC.setSpeed(v3);
         break;
@@ -164,7 +164,7 @@ void loop() {
         //move with line follower
         invKin(LineSensor.speed,LineSensor.angle,LineSensor.spin,&v1,&v2,&v3); //move
         motorA.setSpeed(v1*aMotorOffset);//set motor speeds + direction
-        motorB.setSpeed(v2*bmotorOffset);
+        motorB.setSpeed(v2);
         motorC.setSpeed(v3);
 
         //set timing for motors being on
@@ -172,17 +172,14 @@ void loop() {
           delay(150);
           //turn for 150 ms
           invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1*aMotorOffset);
-          motorB.setSpeed(v2*bmotorOffset);
-          motorC.setSpeed(v3);
         }else{
           delay(15);
           //drive for 15ms
           invKin(0,0,127, &v1, &v2, &v3);
-          motorA.setSpeed(v1*aMotorOffset);
-          motorB.setSpeed(v2*bmotorOffset);
-          motorC.setSpeed(v3);
         }
+        motorA.setSpeed(v1*aMotorOffset);
+        motorB.setSpeed(v2);
+        motorC.setSpeed(v3);
         break;
       }
     }
